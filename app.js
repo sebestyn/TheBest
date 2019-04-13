@@ -83,9 +83,17 @@ TantargyDB.create({
 TantargyDB.create({
    nev:'földrajz' 
 });
+TantargyDB.create({
+   nev:'nyelvtan' 
+});
+TantargyDB.create({
+   nev:'kémia' 
+});
+TantargyDB.create({
+   nev:'irodalom' 
+});
 
-
-SuliDB.create({
+Sugit liDB.create({
     nev:'Budapest VI. Kerületi Kölcsey Ferenc Gimnázium',
     osztalyok:[]
 })
