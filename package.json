@@ -1,9 +1,7 @@
-// TEACHER CODE = 8362
-// STUDENT CODE = 0000
 
 {
   "name": "TheBest",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "",
   "main": "app.js",
   "scripts": {
