@@ -1,0 +1,44 @@
+<% if(!user){ %>
+    <% include partials/header %>
+<% }else if(!teacher){ %>
+    <% include partials/headerStudent %>
+<% }else{ %>
+    <% include partials/headerTeacher %>
+<% } %>
+
+
+<div class="container" id='bootstrap-overrides'>
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Adatvédelem</h1>
+        
+    <p class='white'>
+    1. Aki regisztrál tudomásul veszi és kifejezetten hozzájáruln ahhoz, hogy:
+    </p>
+    <p class='white'>
+    2. Weboldalnak megadott diák személyes adataikat csak a diák által csatlakozott osztályok tanárai láthatják és azt harmadik félnek tovább nem adhatják.
+    </p>
+    <p class='white'>
+    3. Weboldalnak megadott tanár személyes adataikat csak a belépéskor használja az oldal és egyéb célra nem fordítja, harmadik félnek nem adja tovább.
+    </p>
+    <p class='white'>
+    4. A regisztrált tanár elfogadja, hogy a diákjai adatait nem adja tovább harmadik félnek.
+    </p>
+    <p class='white'>
+    A megadott adatok kezelője (adatkezelő) a Weboldal készítője: Zsolt Sebestyén (email cím: sebestyen.info@gmail.com).
+    </p>
+    <p class='white'>
+    8.3. Az adatkezelő szavatolja, hogy az adatkezelés mindenben a hatályos jogszabályi rendelkezések megtartásával történik. Az adatkezelő az adatfeldolgozón keresztül lehetőséget biztosít a regisztráltnak arra, hogy tájékoztatást kérjen személyes adatai kezeléséről, kérje azok törlését, zárolását vagy helyesbítését az alábbi email címen: sebestyen.info@gmail.com. A regisztrált kérésének hatékony ügyintézése céljából kérjük igénybe venni az adatfeldolgozó itt említett elérhetőségeit. Ezen kívül a regisztráltat megilleti a személyes adatai kezelése elleni tiltakozás joga is. Amennyiben a regisztrált az adatkezelő által meghozott döntéssel nem ért egyet, úgy a bírósághoz vagy a Nemzeti Adatvédelmi és Információszabadság Hatósághoz fordulhat.
+    </p>
+    <p class='white'>
+    8.4. A regisztrált tudomásul veszi, hogy ha az elfogadott feltételeket nem tartja be az azonali kizárást eredményez.
+    </p>
+    <p class='white'>
+    8.5 Az adatkezelésre egyebekben az Európai Parlament és Tanács 2016/679. sz. általános adatvédelmi rendelete („GDPR”) irányadó.
+    </p>    
+</div>
+
+
+
+
+
+<% include partials/footer %>

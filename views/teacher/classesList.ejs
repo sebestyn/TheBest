@@ -1,0 +1,40 @@
+<% if(!user){ %>
+    <% include ../partials/header %>
+<% }else if(!teacher){ %>
+    <% include ../partials/headerStudent %>
+<% }else{ %>
+    <% include ../partials/headerTeacher %>
+<% } %>
+
+
+<div class="container">
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Osztályok lista</h1>
+        
+        <table class='alignCenter white marginAuto fontSize2remMobile6vw'>
+            <% osztalyok.forEach(function(osztaly){ %>
+                <tr>
+                    <td><%= osztaly %></td>
+                </tr>
+            <% }) %>
+        </table>
+        
+    
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<% include ../partials/footer %>

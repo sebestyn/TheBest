@@ -1,0 +1,257 @@
+<% if(!user){ %>
+    <% include partials/header %>
+<% }else if(!teacher){ %>
+    <% include partials/headerStudent %>
+<% }else{ %>
+    <% include partials/headerTeacher %>
+<% } %>
+
+<link rel='stylesheet' type='text/css' href='css/register.css'>
+
+<div class="container" id='bootstrap-overrides'>
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Regisztráció</h1>
+    
+    <center>
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></i></span>
+          </div>
+          <input id='lastnameInput' type="text" class="form-control pl-1 marginRight0p5" placeholder="Vezetéknév*" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+            <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></i></span>
+          </div>
+          <input id='firstnameInput' type="text" class="form-control pl-1" placeholder="Keresztnév*" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+        </div>
+        
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></i></span>
+          </div>
+          <input id='usernameInput' type="text" class="form-control" placeholder="Felhasználónév*" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+        </div>
+        
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1p5">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
+          </div>
+          <input id='passwordInput' type="password" class="form-control" placeholder="Jelszó*" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
+          </div>
+          <input id='passwordInput2' type="password" class="form-control" placeholder="Jelszó újra*" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1p5">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-book"></i></span>
+          </div>
+          <select class="custom-select" id="suliInput">
+            <option selected disabled >Iskola*</option>
+            <% sulik.forEach(function(suli){ %>
+                <option value="<%= suli.id %>"><%= suli.nev %></option>
+            <% }) %>
+          </select>
+        </div>
+        
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1p5">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"><i class="fas fa-code-branch"></i></span>
+          </div>
+          <input id="codeInput" type="number" class="form-control" placeholder="Tanári kód (csak tanároknak)" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        
+        <div class="custom-control custom-checkbox">
+                  <label class="toggle">
+                    <input id='elfogadomCheckbox' class="toggle__input gyorsCheckbox" type="checkbox" checked>
+                    <span class="toggle__label">
+                      <span class="toggle__text">Elfogadom az <a href='/feltetel' class='underline'>adatkezelési feltételeket</a> *</span>
+                    </span>
+                  </label>
+            </div>
+        
+        <button id='registerButton' class='btn white borderA bgColorBlack margin2 fontSize1p2 width10 bgColorWhiteHover colorBlackHover'>Belépés</button>
+    </center>
+    
+</div>
+
+
+
+
+<script> 
+
+    $('.toggle__label').click();
+
+    $('#registerButton').on('click',function(){
+        
+        var lastname  = $('#lastnameInput').val();
+        var firstname = $('#firstnameInput').val();
+        var username  = $('#usernameInput').val();
+        var password  = $('#passwordInput').val();
+        var password2 = $('#passwordInput2').val();
+        var suli      = $('#suliInput').val();
+        var code      = $('#codeInput').val();
+        
+        // TANÁRI KÓD VÁLTOZTATÁS
+            if(code==''){
+                code = 0000
+            }
+    //Inputs are good? 
+        var good = true;
+        
+        
+        //Minden kötelező ki van töltve?
+            if( (lastname=="" || firstname=='' || username=='' || password=='' || suli==null) && good){
+                good = false;
+                Swal.fire({
+                  type: 'error',
+                  title: 'Oops...',
+                  text: 'A csilaggal jelölt mezők kitöltése kötelező!'
+                });
+            }
+        
+        //More than 6 character an less than 20?
+            if( !( 4 <= username.length && 20 >= username.length && 4 <= password.length && 20 >= password.length ) && good ){
+                good = false;
+                Swal.fire({
+                  type: 'error',
+                  title: 'Oops...',
+                  text: '4-20 karakter lehet a felhasználónév és a jelszó!'
+                });
+            }
+
+        //2 Pssword is same?
+            if(!samePassword(password,password2) && good){
+                good = false
+                Swal.fire({
+                  type: 'error',
+                  title: 'Oops...',
+                  text: '2 jelszó nem egyezik!'
+                });
+            }
+        
+
+        //ADATKEZELÉSI NYILATKOZAT ELFOGADVA?
+            if( !($('#elfogadomCheckbox').is(':checked')) ){
+                good = false
+                Swal.fire({
+                  type: 'error',
+                  title: 'Oops...',
+                  text: 'Adatkezelési feltételek elfogadása kötelező!'
+                });
+            }
+         
+        if(good){    
+            
+            // SEND AJAX
+                $.ajax({
+                   type:'POST',
+                    url:'/register',
+                    dataType:'json',
+                    data:{
+                        firstname:firstname,
+                        lastname:lastname,
+                        username:username,
+                        password:password,
+                        schoolId:suli,
+                        code:code
+                    },
+                    success:function(back){
+                        console.log(back);
+                        if(back.success){
+                            if(back.tanar){
+                                window.location.href = '/teacher'
+                            }
+                            else{
+                                window.location.href = '/student'
+                            }
+                            
+                        }
+                        else{
+                            if(back.rosszKod){
+                                Swal.fire({
+                                  type: 'error',
+                                  title: 'Oops...',
+                                  text: 'Rossz tanári kódot adtál meg!'
+                                });
+                            }
+                            else{
+                                Swal.fire({
+                                  type: 'error',
+                                  title: 'Oops...',
+                                  text: 'Valami hiba történt, próbáld meg később!'
+                                });
+                            }
+                        }
+                    },
+                    error:function(){
+                        Swal.fire({
+                          type: 'error',
+                          title: 'Oops...',
+                          text: 'Valami hiba történt, próbáld meg később!'
+                        });
+                    }
+                });
+        }
+        
+        
+        
+        
+    })
+    
+
+    
+    
+//FUNCTION
+    function samePassword(pass1,pass2){
+        return pass1 == pass2
+    }
+    
+    //HA MEGNYOMOD AZ ENTERT EGY INPUTON BELÜL
+      $.fn.enterPress = function (fnc) {
+          return this.each(function () {
+              $(this).keypress(function (ev) {
+                  var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+                  if (keycode == '13') {
+                      fnc.call(this, ev);
+                  }
+              })
+          })
+      }
+      
+    
+//ENTER PRESS
+  $('#lastnameInput').enterPress(function(){
+			$('#firstnameInput').focus()
+	});
+	$('#firstnameInput').enterPress(function(){
+			$('#usernameInput').focus()
+	});
+	$('#usernameInput').enterPress(function(){
+			$('#passwordInput').focus()
+	});
+	$('#passwordInput').enterPress(function(){
+			$('#passwordInput2').focus()
+	});
+	$('#passwordInput2').enterPress(function(){
+			$('#codeInput').focus()
+	});
+	$('#codeInput').enterPress(function(){
+			$('#registerButton').click()
+	});
+    
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<% include partials/footer %>

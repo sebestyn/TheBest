@@ -1,0 +1,85 @@
+<% if(!user){ %>
+    <% include ../partials/header %>
+<% }else if(!teacher){ %>
+    <% include ../partials/headerStudent %>
+<% }else{ %>
+    <% include ../partials/headerTeacher %>
+<% } %>
+
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+
+<div class="container">
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw marginTop10'>Add meg az osztály kódját:</h1>
+
+
+        <center>
+            <div class="input-group mb-3 width30pcmobile90pc marginTop1">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fas fa-code-branch"></i></i></span>
+              </div>
+              <input id='kodInput' type="number" class="form-control" placeholder="Kód" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+            </div>
+            
+            <button id="belepesButton" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover alignCenter margin2 "> Belépés </button>
+        </center>
+
+    
+</div>
+
+<script>
+    
+    $('#belepesButton').on('click',function(){
+       
+       var kod = $('#kodInput').val();
+       if(kod==''){
+            Swal.fire({
+              type: 'error',
+              title: 'Oops...',
+              text: 'Nem adtál meg semmit!'
+            });
+       } else {
+           $.ajax({
+              type:'POST',
+              url:'/connectSt',
+              dataType:'json',
+              data:{
+                  kod:kod
+              },
+              success:function(back){
+                  if(back.success){
+                      Swal.fire({
+                          type: 'success',
+                          title: 'Csatlakoztál',
+                          showConfirmButton: false,
+                          timer:1500
+                        });
+                        setTimeout(function(){window.location.href = '/userInfoSt'; }, 1600);
+                  } else {
+                        Swal.fire({
+                          type: 'error',
+                          title: 'Oops...',
+                          text: 'Valami hiba történt, próbáld meg később!'
+                        });
+                  }
+              },
+              error:function(){
+                Swal.fire({
+                      type: 'error',
+                      title: 'Oops...',
+                      text: 'Valami hiba történt, próbáld meg később!'
+                    });    
+              }
+           });
+       }
+        
+    });
+    
+</script>
+
+
+
+
+
+
+<% include ../partials/footer %>

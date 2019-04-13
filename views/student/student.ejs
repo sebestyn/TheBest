@@ -1,0 +1,65 @@
+<% if(!user){ %>
+    <% include ../partials/header %>
+<% }else if(!teacher){ %>
+    <% include ../partials/headerStudent %>
+<% }else{ %>
+    <% include ../partials/headerTeacher %>
+<% } %>
+
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+
+<div class="container">
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Áttekintés</h1>
+        
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Nincs mentett pontod</h1>
+
+        <table class="table table-dark tablePontok">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Tantárgy</th>
+              <th scope="col">Időpont</th>
+              <th scope="col">Név</th>
+              <th scope="col">Pont</th>
+            </tr>
+          </thead>
+          <tbody>
+    <% kapott.forEach(function(feladat,index){ %>
+            <tr>
+              <th scope="row"><%= index+1 %>.</th>
+              <td><%= feladat.tantargy %></td>
+              <td><%= feladat.mikor.slice(4); %></td>
+              <td><%= feladat.nev %></td>
+              <td><%= feladat.pont %></td>
+            </tr>
+    <% }) %>
+          </tbody>
+        </table>
+    
+</div>
+
+
+
+<script>
+  
+  var kapott = <%- JSON.stringify(kapott) %>;
+  if(kapott.length == 0){
+    $('.tablePontok').hide();
+    $('.nincsSzoveg').removeClass('hide');
+  }
+  
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<% include ../partials/footer %>

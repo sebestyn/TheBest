@@ -1,0 +1,90 @@
+<% if(!user){ %>
+    <% include ../partials/header %>
+<% }else if(!teacher){ %>
+    <% include ../partials/headerStudent %>
+<% }else{ %>
+    <% include ../partials/headerTeacher %>
+<% } %>
+
+<script>
+    $('body').css('opacity','0')
+</script>
+
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+
+<div class="container">
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Pontjaim</h1>
+        
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Nincs mentett osztályod</h1>
+
+    <table class="table table-dark tablePontok">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Osztály</th>
+              <th scope="col">Tantárgy</th>
+              <th scope="col">Pont</th>
+            </tr>
+          </thead>
+          <tbody>
+    <% pontjaim.forEach(function(pont,index){ %>
+            <tr class='pointer pontTr'>
+              <th scope="row"><%= index+1 %>.</th>
+              <td><%= pont.osztaly %></td>
+              <td><%= pont.tantargy %></td>
+              <td><%= pont.pont %></td>
+            </tr>
+            <tbody class='feladatokTbody'>
+                <tr class="table-secondary black">
+                    <td></td>
+                    <td>Dátum</td>
+                    <td>Feladat</td>
+                    <td>Pont</td>
+                </tr>
+                <% if(pont.kapott != undefined){ %>
+                    <% pont.kapott.forEach(function(feladat){ %>
+                        <tr class="table-light black">
+                          <td></td>
+                          <td><%= feladat.mikor %></td>
+                          <td><%= feladat.nev %></td>
+                          <td><%= feladat.pont %></td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            <tbody>
+    <% }) %>
+          </tbody>
+        </table>
+        
+
+    <center>
+        <a href="/connectSt" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover alignCenter marginTop2"> Új osztályhoz csatlakozás </a>
+    </center>
+    
+    
+</div>
+
+<script>
+    //TOGGLE FELADATOK
+        $('.feladatokTbody').slideUp();
+        setTimeout(function(){$('body').css('opacity','1')},400);
+        
+        $('.pontTr').on('click',function(){
+              $(this).parent().next('tbody').slideToggle(500);
+        });
+        
+      var pontjaim = <%- JSON.stringify(pontjaim) %>;
+      if(pontjaim.length == 0){
+        $('.tablePontok').hide();
+        $('.nincsSzoveg').removeClass('hide');
+      }
+  
+        
+</script>
+
+
+
+
+
+<% include ../partials/footer %>

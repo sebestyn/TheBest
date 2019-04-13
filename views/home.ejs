@@ -1,0 +1,72 @@
+<% if(!user){ %>
+    <% include partials/header %>
+<% }else if(!teacher){ %>
+    <% include partials/headerStudent %>
+<% }else{ %>
+    <% include partials/headerTeacher %>
+<% } %>
+
+<div class='container mainContainer'> 
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize9vwMobile17vw'>TheBest</h1>
+        
+    <!--LEÍRÁS-->
+        <div class='container width70pcmobile98pc'>
+            <p class='white alignJustify '>
+                Ez lesz az oldal leírása. Még nincs meg és nem is tudom milyen hosszú lesz.
+                De valahogy röviden bemutatom az olda lcélját és hogy hogyan lehet használni.
+                Ez lesz az oldal leírása. Még nincs meg és nem is tudom milyen hosszú lesz.
+                De valahogy röviden bemutatom az olda lcélját és hogy hogyan lehet használni.
+                Ez lesz az oldal leírása. Még nincs meg és nem is tudom milyen hosszú lesz.
+                De valahogy röviden bemutatom az olda lcélját és hogy hogyan lehet használni.
+            </p>
+        </div>
+    
+    <!--GOMBOK-->
+        <div class="container width50pcIfNotM marginTop3">
+          <div class="row">
+            <div class="col-sm alignCenter margin1">
+              <button class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover fontSize1p5" id='bejelentkezekGomb'>Bejelenkezek</button>
+            </div>
+            <div class="col-sm alignCenter margin1 marginBottom5">
+              <button class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover fontSize1p5" id='regisztralokGomb'>Regisztrálok</button>
+            </div>
+          </div>
+        </div>
+</div>  
+
+    
+
+<script>
+    
+    //COOKIE TESTER
+        var user = '<%- JSON.stringify(user) %>';
+        if(checkCookie() && !Boolean(user) ){
+            $('body').append('<form action="/login" method="POST" class="hide"><input id="usernameInput12" name="username" type="text" ><input id="passwordInput12" name="password" type="password" ><button id="loginButton12"></button></form>');
+            $('#usernameInput12').val(checkCookie().username);
+            $('#passwordInput12').val(checkCookie().password);
+            $('#loginButton12').click()
+        }
+    
+
+    
+    $('#bejelentkezekGomb').on('click',function(){
+       window.location.href = '/login' 
+    });
+    
+    $('#regisztralokGomb').on('click',function(){
+        window.location.href = '/register' 
+    });
+    
+</script>
+
+
+
+
+
+
+
+
+
+
+<% include partials/footer %>

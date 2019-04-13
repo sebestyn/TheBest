@@ -1,0 +1,82 @@
+<% if(!user){ %>
+    <% include partials/header %>
+<% }else if(!teacher){ %>
+    <% include partials/headerStudent %>
+<% }else{ %>
+    <% include partials/headerTeacher %>
+<% } %>
+
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+
+<div class="container">
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Bejelentkezés</h1>
+    
+    <center>
+        <form action="/login" method="POST">
+            <div class="input-group mb-3 width30pcmobile90pc marginTop3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fas fa-user"></i></i></span>
+              </div>
+              <input id="usernameInput" name="username" type="text" class="form-control" placeholder="Felhasználónév" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+            
+            <div class="input-group mb-3 width30pcmobile90pc marginTop3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
+              </div>
+              <input id="passwordInput" name="password" type="password" class="form-control" placeholder="Jelszó" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+            <div class="custom-control custom-checkbox">
+                  <label class="toggle">
+                    <input id='rememberMeCheckbox' class="toggle__input gyorsCheckbox" type="checkbox" checked>
+                    <span class="toggle__label">
+                      <span class="toggle__text">Jegyezzen meg!</span>
+                    </span>
+                  </label>
+            </div>
+  
+            <button onclick="cookieSave()" id="loginButton" class='btn white borderA bgColorBlack margin2 fontSize1p2 width10 bgColorWhiteHover colorBlackHover'>Belépés</button>
+        </form>
+    </center>
+    
+</div>
+
+
+
+
+
+
+<script>
+
+$('.toggle__label').click();
+
+function cookieSave(){
+    if($("#rememberMeCheckbox").is(':checked')){
+        setCookie('username',$('#usernameInput').val(),370);
+        setCookie('password',$('#passwordInput').val(),370);
+    }
+}
+  
+//COOKIE TESTER
+    var user = '<%- JSON.stringify(user) %>';
+    if(checkCookie() && !Boolean(user) ){
+        $('body').append('<form action="/login" method="POST" class="hide"><input id="usernameInput12" name="username" type="text" ><input id="passwordInput12" name="password" type="password" ><button id="loginButton12"></button></form>');
+        $('#usernameInput12').val(checkCookie().username);
+        $('#passwordInput12').val(checkCookie().password);
+        $('#loginButton12').click()
+    }
+    
+
+    
+</script>
+
+
+
+
+
+
+
+
+
+<% include partials/footer %>

@@ -1,0 +1,51 @@
+<% if(!user){ %>
+    <% include ../partials/header %>
+<% }else if(!teacher){ %>
+    <% include ../partials/headerStudent %>
+<% }else{ %>
+    <% include ../partials/headerTeacher %>
+<% } %>
+
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+
+<div class="container">
+    <!--CÍM-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>INFO</h1>
+
+        <table class="container  width70pcmobile98pc ">
+            <tr>
+                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1">Név: </td>
+                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1"><%= nev %></td>
+            </tr>
+            <tr>
+                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1">Iskola: </td>
+                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1"><%= suli %></td>
+            </tr>
+            <tr>
+                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1">Osztályok: </td>
+                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1"><%= osztalyok %></td>
+            </tr>
+        </table>
+        <center>
+            <a href="/connectSt" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover alignCenter marginTop2"> Új osztályhoz csatlakozás </a>
+        </center>
+
+    
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<% include ../partials/footer %>

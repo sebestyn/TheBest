@@ -1,0 +1,420 @@
+<% include ../partials/headerTeacherPoints.ejs %>
+
+
+
+<script>
+    $('body').css('opacity','0')
+</script>
+
+<div class="container-fluid">
+
+<!--CÍM-->
+    <h1 class='alignCenter white marginTop1 fontFamilyCourier fontSize4remMobile9vw '><%= tantargy %></h1>   
+    <h1 class='alignCenter white  fontFamilyCourier fontSize2remMobile6vw '><%= osztaly %></h1>  
+    
+    <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott</h1>
+    
+    <div class="table-responsive-lg width85pcmobile99pc marginAuto emberekDiv">
+        <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom5">
+            <thead>
+              <tr>
+                <th class='alignCenter' scope="col">#</th>
+                <th class='alignCenter' scope="col">Név</th>
+                <th class='alignCenter' scope="col">Feladat neve</th>
+                <th class='alignCenter' scope="col">Kapott pont</th>
+                <th class='alignCenter' scope="col">Mentés</th>
+                <th class='alignCenter' scope="col">Pont</th>
+                <th class='alignCenter' scope="col">Egyéb</th>
+              </tr>
+            </thead>
+            <tbody>
+                    <tr style='border-bottom:5px solid #3d444b;border-top:5px solid #3d444b;'>
+                        <th class='alignCenter' scope="row"> <input type='checkbox' id='selectAll' class='checkbox checkbox1p5x marginRight0p5'></th>
+                        <td class='alignCenter'> Kijelölt emberek: </td>
+                        <td class='alignCenter feladatInputTd'> 
+                            <input type="text" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
+                        </td>
+                        <td class='alignCenter pontInputTd'> 
+                            <input type="number" class="pontInput form-control hideArrowNumberInput maxWidth60pIfNotMobile marginAuto"  placeholder="Pont" aria-label="Pont" aria-describedby="basic-addon1">
+                        </td>
+                        <td class='alignCenter'> 
+                            <button class='kijeloltEmberekButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Mentés</button>
+                        </td>
+                        <td class='alignCenter'> 0  </td>
+                        <td class='width5pc'></td>
+                    </tr>
+                    
+               <% diakok.forEach(function(diak,index){ %>
+                    <tr name='<%= diak._id %>' id='<%= diak.userId %>'>
+                        <th class='alignCenter' scope="row"> <input type='checkbox' class='checkbox diakCheckbox checkbox1p5x marginRight0p5'> <%= index+1 %>.</th>
+                        <td class='alignCenter pointer diakNevTd'> <%= diak.nev %> </td>
+                        <td class='alignCenter feladatInputTd'> 
+                            <input type="text" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
+                        </td>
+                        <td class='alignCenter pontInputTd'> 
+                            <input type="number" class="pontInput form-control hideArrowNumberInput maxWidth60pIfNotMobile marginAuto"  placeholder="Pont" aria-label="Pont" aria-describedby="basic-addon1">
+                        </td>
+                        <td class='alignCenter'> 
+                            <button name='<%= diak._id %>' id='<%= diak.userId %>' class='mentesButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Mentés</button>
+                        </td>
+                        <td class='alignCenter'> <%= diak.pont %>  </td>
+                        <td class='width5pc'>
+                            <div class='marginLeft0p5'>
+                            <div class="btn-group dropup margin0 ">
+                              <button type="button" class="btn btn-secondary margin0 borderRadius0p5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="fas fa-ellipsis-h"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+                                <a  class="dropdown-item pointer profilTorleseButton" >Profil törlése a csoportból</a>
+                                <a  class="dropdown-item pointer profilPontjaiTorleseButton" >Profil pontjai törlése</a>
+                              </div>
+                            </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tbody class='feladatokTbody'>
+                        <tr class="table-secondary ">
+                            <td colspan="2" class='alignCenter black'>Időpont</td>
+                            <td colspan="2" class='alignCenter black'>Feladat neve</td>
+                            <td colspan="3" class='alignCenter black'>Pont</td>
+                        </tr>
+                        <% diak.kapott.reverse() %>
+                        <% diak.kapott.forEach(function(feladat){ %>
+                            <tr class="table-light ">
+                                <td colspan="2" class='alignCenter black'><%= feladat.mikor %></td>
+                                <td colspan="2" class='alignCenter black'><%= feladat.nev %></td>
+                                <td colspan="3" class='alignCenter black'><%= feladat.pont %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+               <% }) %>
+            </tbody>
+        </table>
+    </div>
+    
+    <center>
+        <button id='csoportTorleseButton' class='btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Csoport törlése</button>
+    </center>
+    
+</div>
+
+
+
+<script>
+    
+    //TOGGLE FELADATOK
+        $('.feladatokTbody').slideUp();
+        setTimeout(function(){$('body').css('opacity','1')},400);
+        $('.diakNevTd').on('click',function(){
+              $(this).parent().parent().next('tbody').slideToggle(500)  
+        });
+        
+    //CHECKBOX 
+        //MINDENKI KIJELÖLÉSE	
+        	$("#selectAll").change(function(){
+        		selectAllOne()
+        	});
+        //MINDENKI KIJELÖLÉSE 2
+        	$('.checkbox').change(function(){
+        		selectAllTwo()
+        	});
+    
+     var osztalyId   = '<%= classId %>';
+     var tantargy    = '<%= subject %>';
+     
+     var vannakDiakok = !(<%- JSON.stringify(diakok) %>.length == 0);
+
+     
+     if(!vannakDiakok){
+        $('.emberekDiv').hide();
+        $('.nincsSzoveg').removeClass('hide');
+     }
+        
+    //EGY EMBER ÚJ FELADAT/PONT
+        $('.mentesButton').on('click',function(){
+            var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
+            var pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
+            var id          = $(this).attr("name");
+            var userId      = $(this).attr('id');
+            var osztalyId   = '<%= classId %>';
+            var tantargy    = '<%= subject %>'
+            
+
+            if(pont=='' && (pont==0 && feladatNev == '')){
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Nem adtad meg a kapott pontot!'
+                })
+            } else {
+                $.ajax({
+                    type:'POST',
+                    url:'/newPoint',
+                    dataType:'json',
+                    data:{
+                        osztalyId:osztalyId,
+                        tantargy:tantargy,
+                        feladatNev:feladatNev,
+                        pont:pont,
+                        nevekId:[id],
+                        userId:[userId]
+                    },
+                    success:function(back){
+                        if(back.success){
+                            location.reload()
+                        } else {
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: 'Valami hiba történt, próbáld meg később!'
+                            })
+                        }
+                    },
+                    error:function(){
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Valami hiba történt, próbáld meg később!'
+                        })
+                    }
+                })
+            }
+            
+        });
+
+
+    //KIJELÖLT EMBEREK ÚJ FELADAT/PONT
+        $('.kijeloltEmberekButton').on('click',function(){
+            var trDarab = $('.nevekTable tr').length-1;
+		    var mennyiChecked = Number($('.diakCheckbox:checked').length);
+		    
+		    var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
+            var pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
+            
+            
+            var nevekId = [];
+            var userekId  = [];
+            
+            var hiba = false;
+            
+            if(mennyiChecked==0){
+                hiba = true;
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Nem jelöltél ki senkit!'
+                })
+            }
+            if(pont=='' && (pont==0 && feladatNev == '')){
+                hiba = true;
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Nem adtad meg a kapott pontot!'
+                })
+            } 
+            
+            if(!hiba){
+    		    for(var i=0;i<trDarab-1;i++){
+    		        var selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
+    		        if(selectedRow){
+    		            var nevId = $('.nevekTable tr').eq(i+2).attr('name');
+    		            var userId = $('.nevekTable tr').eq(i+2).attr('id');
+    		            
+    		            nevekId.push(nevId);
+    		            userekId.push(userId);
+    		        }
+    		    }
+    		    $.ajax({
+                    type:'POST',
+                    url:'/newPoint',
+                    dataType:'json',
+                    data:{
+                        osztalyId:osztalyId,
+                        tantargy:tantargy,
+                        feladatNev:feladatNev,
+                        pont:pont,
+                        nevekId:nevekId,
+                        userId:userekId
+                    },
+                    success:function(back){
+                        if(back.success){
+                            location.reload()
+                        } else {
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: 'Valami hiba történt, próbáld meg később!'
+                            })
+                        }
+                    },
+                    error:function(){
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Valami hiba történt, próbáld meg később!'
+                        })
+                    }
+                });
+            }
+        });
+        
+    //PONTOK TÖRLÉSE
+        $('.profilPontjaiTorleseButton').on('click',function(){
+           Swal.fire({
+              title: 'Biztos törlöd?',
+              text: "Törlődni fognak a feladatai és a pontjai is!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              cancelButtonText: 'Mégse',
+              confirmButtonText: 'Törlés!'
+            }).then((result) => {
+              if (result.value) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Törölve',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+                var nevId = $(this).parent().parent().parent().parent().parent().attr('name');
+                var userId = $(this).parent().parent().parent().parent().parent().attr("id");
+                $.ajax({
+                   type:'POST',
+                   url:'/deletPoints',
+                   dataType:'json',
+                   data:{
+                       osztalyId:osztalyId,
+                       tantargy:tantargy,
+                       nevId:nevId,
+                       userId:userId
+                   },
+                   success:function(back){
+                       setTimeout(function(){location.reload();},800)
+                   },
+                   error:function(){
+                       Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Valami hiba történt, próbáld meg később!'
+                        })
+                   }
+               })
+                    
+              }
+            });
+        });
+    //PROFIL TÖRLÉSE A CSOPORTBÓL
+        $('.profilTorleseButton').on('click',function(){
+            Swal.fire({
+              title: 'Biztos törlöd?',
+              text: "A diák törlődni fog a csoportból és vele együtt a pontjai is!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              cancelButtonText: 'Mégse',
+              confirmButtonText: 'Törlés!'
+            }).then((result) => {
+              if (result.value) {
+                Swal.fire({
+                    type: 'success',
+                    title: 'Törölve',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+                var nevId  = $(this).parent().parent().parent().parent().parent().attr('name');
+                var userId = $(this).parent().parent().parent().parent().parent().attr("id");
+                $.ajax({
+                  type:'POST',
+                  url:'/deletProfileFromGroup',
+                  dataType:'json',
+                  data:{
+                      osztalyId:osztalyId,
+                      tantargy:tantargy,
+                      nevId:nevId,
+                      userId:userId
+                  },
+                  success:function(back){
+                      setTimeout(function(){location.reload()},800);
+                  },
+                  error:function(){
+                      Swal.fire({
+                           type: 'error',
+                           title: 'Oops...',
+                           text: 'Valami hiba történt, próbáld meg később!'
+                       })
+                  }
+                });
+              }
+            });
+        });
+
+    //CSOPORT TÖRLÉSE
+        $('#csoportTorleseButton').on('click',function(){
+            Swal.fire({
+              title: 'Biztos törlöd?',
+              text: "Törlődni fog a csoport összes adata!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              cancelButtonText: 'Mégse',
+              confirmButtonText: 'Törlés!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type:'POST',
+                        url:'/deleteGroup',
+                        dataType:'json',
+                        data:{
+                            osztalyId:osztalyId,
+                            tantargy:tantargy
+                        },
+                        success:function(){
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Törölve',
+                                showConfirmButton: false,
+                                timer: 1000
+                            });
+                            setTimeout(function(){window.location.href='/classesTe'},800);
+                        },
+                        error:function(){
+                            Swal.fire({
+                               type: 'error',
+                               title: 'Oops...',
+                               text: 'Valami hiba történt, próbáld meg később!'
+                           })
+                        }
+                    })
+                }
+            })
+        });
+
+
+
+
+//FUNCTIONS
+    //CHECKBOX SELECT ALL
+		function selectAllOne(){  //"select all" change 
+			$(".checkbox").prop('checked', $("#selectAll").prop("checked")); //change all ".checkbox" checked status
+		}
+		function selectAllTwo (){ 
+	        //uncheck "select all", if one of the listed checkbox item is unchecked
+    			if(false == $('.checkbox').prop("checked")){ //if this item is unchecked
+    				$("#selectAll").prop('checked', false); //change "select all" checked status to false
+    			}
+	        //check "select all" if all checkbox items are checked
+    			if ($('.checkbox:checked').length == $('.checkbox').length ){
+    				$("#select_all").prop('checked', true);
+    			}
+		}
+
+</script>
+
+
+
+
+<% include ../partials/footer %>
