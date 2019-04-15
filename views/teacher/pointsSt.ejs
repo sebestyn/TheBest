@@ -57,7 +57,7 @@
                         <td class='alignCenter'> 
                             <button name='<%= diak._id %>' id='<%= diak.userId %>' class='mentesButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Mentés</button>
                         </td>
-                        <td class='alignCenter'> <%= diak.pont %>  </td>
+                        <td class='alignCenter diakPontTd'> <%= diak.pont %>  </td>
                         <td class='width5pc'>
                             <div class='marginLeft0p5'>
                             <div class="btn-group dropup margin0 ">
@@ -101,7 +101,7 @@
 
 
 <script>
-    
+    var date = new Date().toDateString();
     //TOGGLE FELADATOK
         $('.feladatokTbody').slideUp();
         setTimeout(function(){$('body').css('opacity','1')},400);
@@ -138,6 +138,7 @@
             var userId      = $(this).attr('id');
             var osztalyId   = '<%= classId %>';
             var tantargy    = '<%= subject %>'
+            var thisHtml = $(this);
             
 
             if(pont=='' && (pont==0 && feladatNev == '')){
@@ -161,7 +162,16 @@
                     },
                     success:function(back){
                         if(back.success){
-                            location.reload()
+                            var jelenlegiPont = Number(thisHtml.parent().parent().find('.diakPontTd').text());
+                            thisHtml.parent().parent().find('.diakPontTd').text(jelenlegiPont+pont);
+                            thisHtml.parent().parent().parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Elmentve!',
+                                text: '',
+                                showConfirmButton: false,
+                                timer: 1000
+                            });
                         } else {
                             Swal.fire({
                                 type: 'error',
@@ -220,7 +230,6 @@
     		        if(selectedRow){
     		            var nevId = $('.nevekTable tr').eq(i+2).attr('name');
     		            var userId = $('.nevekTable tr').eq(i+2).attr('id');
-    		            
     		            nevekId.push(nevId);
     		            userekId.push(userId);
     		        }
@@ -239,13 +248,27 @@
                     },
                     success:function(back){
                         if(back.success){
-                            location.reload()
+                            for(var i=0;i<trDarab-1;i++){
+                		        var selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
+                		        if(selectedRow){
+                		            var jelenlegiPont = Number($('.nevekTable tr').eq(i+2).find('.diakPontTd').text());
+                		            $('.nevekTable tr').eq(i+2).find('.diakPontTd').text(jelenlegiPont+pont);
+                		            $('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
+                		        }
+                		    }
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Elmentve!',
+                                text: '',
+                                showConfirmButton: false,
+                                timer: 1000
+                            });
                         } else {
                             Swal.fire({
                                 type: 'error',
                                 title: 'Oops...',
                                 text: 'Valami hiba történt, próbáld meg később!'
-                            })
+                            });
                         }
                     },
                     error:function(){
