@@ -52,21 +52,12 @@
 $('.toggle__label').click();
 
 function cookieSave(){
+    loaderShow();
     if($("#rememberMeCheckbox").is(':checked')){
         setCookie('username',$('#usernameInput').val(),370);
         setCookie('password',$('#passwordInput').val(),370);
     }
 }
-  
-//COOKIE TESTER
-    var user = '<%- JSON.stringify(user) %>';
-    if(checkCookie() && !Boolean(user) ){
-        $('body').append('<form action="/login" method="POST" class="hide"><input id="usernameInput12" name="username" type="text" ><input id="passwordInput12" name="password" type="password" ><button id="loginButton12"></button></form>');
-        $('#usernameInput12').val(checkCookie().username);
-        $('#passwordInput12').val(checkCookie().password);
-        $('#loginButton12').click()
-    }
-    
 
     
 </script>

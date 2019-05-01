@@ -27,7 +27,7 @@
             <table class="table table-striped table-dark marginTop0">
                 <tbody>
                     <% tantargy.osztalyok.forEach(function(osztaly){ %>
-                        <tr class='pointer' onclick="document.location = '/points/<%= osztaly._id %>/<%= tantargy.nev %>';">
+                        <tr class='pointer tantargyTr' onclick="document.location = '/points/<%= osztaly._id %>/<%= tantargy.nev %>';">
                             <td class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw '><%= osztaly.nev %></td>
                         </tr>
                     <% }) %>
@@ -52,6 +52,10 @@
 
 <script>
     var tantargyai = <%- JSON.stringify(tantargyai) %>;
+    
+    $('.tantargyTr').on('click',function(){
+        loaderShow();
+    })
 
     $('.toggleDiv').slideUp();
 

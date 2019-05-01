@@ -40,18 +40,6 @@
     
 
 <script>
-    
-    //COOKIE TESTER
-        var user = '<%- JSON.stringify(user) %>';
-        if(checkCookie() && !Boolean(user) ){
-            $('body').append('<form action="/login" method="POST" class="hide"><input id="usernameInput12" name="username" type="text" ><input id="passwordInput12" name="password" type="password" ><button id="loginButton12"></button></form>');
-            $('#usernameInput12').val(checkCookie().username);
-            $('#passwordInput12').val(checkCookie().password);
-            $('#loginButton12').click()
-        }
-    
-
-    
     $('#bejelentkezekGomb').on('click',function(){
        window.location.href = '/login' 
     });

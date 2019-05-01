@@ -1,9 +1,9 @@
 <% if(!user){ %>
-    <% include ../partials/header %>
+    <% include partials/header %>
 <% }else if(!teacher){ %>
-    <% include ../partials/headerStudent %>
+    <% include partials/headerStudent %>
 <% }else{ %>
-    <% include ../partials/headerTeacher %>
+    <% include partials/headerTeacher %>
 <% } %>
 
 <link rel='stylesheet' type='text/css' href='css/login.css'>
@@ -21,13 +21,17 @@
                 <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1">Iskola: </td>
                 <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1"><%= suli %></td>
             </tr>
-            <tr>
-                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1">Osztályok: </td>
-                <td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1"><%= osztalyok %></td>
-            </tr>
+			<% if(!teacher){ %>
+				<tr>
+					<td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1">Osztályok: </td>
+					<td class="white fontFamilyCourier fontSize1p5remMobile4vw padding1"><%= osztalyok %></td>
+				</tr>
+			<% } %>
         </table>
         <center>
-            <a href="/connectSt" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover alignCenter marginTop2"> Új osztályhoz csatlakozás </a>
+			<% if(!teacher){ %>
+            	<a href="/connectSt" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover alignCenter 	marginTop2"> Új osztályhoz csatlakozás </a>
+			<% } %>
             </br>
             <a href="/changepassword" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover alignCenter marginTop2"> Jelszó változtatása </a>
         </center>
@@ -50,4 +54,4 @@
 
 
 
-<% include ../partials/footer %>
+<% include partials/footer %>

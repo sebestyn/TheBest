@@ -153,35 +153,6 @@ SuliDB.create({
             app.get('/changepassword',isLoggedIn,function(req, res) {
                 res.render("changePassword.ejs");
             });
-        
-        //JELSZÓ VÁLTOZTATÁS POST
-        app.post('/changepassword', function(req, res) {
-            var userId = req.user._id;
-            var oldpassword = req.body.oldpassword;
-            var newpassword = req.body.newpassword;
-            
-            User.findOne({ _id: userId },(err, user) => {
-              if (err) {
-                res.json({ success: false, message: 'Próbáld meg újra!' });
-              } else {
-                if (!user) {
-                    res.json({ success: false, message: 'Felhasználó nem létezik!' });
-                } else {
-                  user.changePassword(oldpassword, newpassword, function(err) {
-                     if(err) {
-                              if(err.name === 'IncorrectPasswordError'){
-                                   res.json({ success: false, message: 'Rossz jelszót adtál meg!' }); // Return error
-                              }else {
-                                  res.json({ success: false, message: 'Próbáld meg később!' });
-                              }
-                    } else {
-                      res.json({ success: true, message: 'Elmentve!' });
-                     }
-                   })
-                }
-              }
-            });   
-        });
             
         //ADATKEZELÉSI FELTÉTEL
             app.get("/feltetel",function(req, res) {
@@ -210,7 +181,7 @@ SuliDB.create({
                                                 }
                                             })
                                         })
-                                        res.render('student/userInfo.ejs',{nev:req.user.nev,suli:suli.nev,osztalyok:osztalyok})
+                                        res.render('userInfo.ejs',{nev:req.user.nev,suli:suli.nev,osztalyok:osztalyok})
                                     }
                                 });
                             }
@@ -544,10 +515,11 @@ SuliDB.create({
                             var diakok = csoport.diakok;
                             var csoportOsztaly = suli.osztalyok[osztalyIndex].nev;
                             var csoportTantargy = csoport.nev;
+                            var osztalyKod = suli.osztalyok[osztalyIndex].kod
                             sortObj(diakok,'nev');
                             
 
-                            res.render('teacher/pointsSt.ejs',{diakok:diakok,osztaly:csoportOsztaly,tantargy:csoportTantargy,classId:classId,subject:subject});
+                            res.render('teacher/pointsSt.ejs',{diakok:diakok,osztaly:csoportOsztaly,tantargy:csoportTantargy,classId:classId,subject:subject,kod:osztalyKod});
                         }
                     }
                 });
@@ -616,12 +588,9 @@ SuliDB.create({
             });
         //PONTOK/FELADATOK TÖRLÉSE
             app.post('/deletPoints',function(req, res) {
-
-                var nevId = req.body.nevId;
-                var userId  = req.body.userId;
+                var nevekId = req.body.nevekId;
                 var osztalyId = req.body.osztalyId;
                 var tantargy = req.body.tantargy;
-                
                 var sikerult = true;
                 SuliDB.findOne({'_id':req.user.suli},function(err, suli){
                     if(err){
@@ -631,21 +600,24 @@ SuliDB.create({
                     } else {
                         var osztalyIndex = suli.osztalyok.findIndex(x => String(x._id) == String(osztalyId));
                         var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => String(x.nev) == String(tantargy));
-                        var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
                         
-                        //SULIDB-ből TÖRLÉS
-                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].pont = 0;
-                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott = [];
-
+                        nevekId.forEach(function(nevId){
+                            var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
+                            
+                            //SULIDB-ből TÖRLÉS
+                                suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].pont = 0;
+                                suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott = [];
+                        });
                         suli.save(function(err, data){
                             if(err){
                                 sikerult = false;
                                 console.log('SULI SUJECT MENTÉS ERROR 6');
                                 console.log(err);
                             } else {
-                                console.log(nevId +' pontjai törölve' );
+                                console.log(nevekId.toString() +' pontjai törölve' );
                             }
                         });
+                        
                     }
                 });
                 res.status(200).send({success: sikerult})
@@ -701,6 +673,7 @@ SuliDB.create({
                     var isTeacher = false;
                     var rosszKodotAdottMeg = false;
                     var sikerult = false;
+                    //TANÁR KÓD = 8362
                     if(code==8362){
                         isTeacher = true;
                         sikerult = true;
@@ -732,22 +705,59 @@ SuliDB.create({
                             User.register(new User(newUserAdatai), req.body.password, function(err, user){
                                 if(err){
                                     console.log('REGISTER ERROR 1');
-                                    sikerult = false;
+                                    res.json({ success: false, message: 'Már létezik ilyen felhasználónév!' });
                                 }else{
                                     console.log(user.username+' REGISZTRÁLT mint: ' + tanarVagyDiak)
+                                    res.status(200).send({success: sikerult,tanar:isTeacher})
                                 }
                             });
+                    } else {
+                        res.json({ success: false, message: 'Nem létező tanári kód!' });
                     }
-                    res.status(200).send({success: sikerult,rosszKod:rosszKodotAdottMeg,tanar:isTeacher})
             });
             
+    //JELSZÓ VÁLTOZTATÁS POST
+        app.post('/changepassword', function(req, res) {
+            var userId = req.user._id;
+            var oldpassword = req.body.oldpassword;
+            var newpassword = req.body.newpassword;
+            
+            User.findOne({ _id: userId },(err, user) => {
+              if (err) {
+                res.json({ success: false, message: 'Próbáld meg újra!' });
+              } else {
+                if (!user) {
+                    res.json({ success: false, message: 'Felhasználó nem létezik!' });
+                } else {
+                  user.changePassword(oldpassword, newpassword, function(err) {
+                     if(err) {
+                              if(err.name === 'IncorrectPasswordError'){
+                                   res.json({ success: false, message: 'Rossz jelszót adtál meg!' }); // Return error
+                              }else {
+                                  res.json({ success: false, message: 'Próbáld meg később!' });
+                              }
+                    } else {
+                        console.log('Jelsó változtatás: ' + req.user.nev);
+                        res.json({ success: true, message: 'Elmentve!' });
+                     }
+                   })
+                }
+              }
+            });   
+        });
+        
     //BEJELENTKEZÉS
         app.post("/login", passport.authenticate("local", {
-            failureRedirect: "/login"
+            failureRedirect: "/rosszJelszo"
         }) ,function(req, res){
             res.redirect('/student')
         });
-        
+
+    //ROSSZ JELSZÓ
+        app.get('/rosszJelszo',function(req, res) {
+           res.render('rosszJelszo.ejs');
+        });
+
     //KIJELENTKEZÉS
         app.get('/logout', function(req, res){
           req.logout();

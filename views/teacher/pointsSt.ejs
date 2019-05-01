@@ -10,12 +10,12 @@
 
 <!--CÍM-->
     <h1 class='alignCenter white marginTop1 fontFamilyCourier fontSize4remMobile9vw '><%= tantargy %></h1>   
-    <h1 class='alignCenter white  fontFamilyCourier fontSize2remMobile6vw '><%= osztaly %></h1>  
+    <h1 class='alignCenter white  fontFamilyCourier fontSize2remMobile6vw '><%= osztaly %><span class='fontSize1p2'> (kód:<%= kod %>)</span></h1>  
     
     <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott</h1>
     
     <div class="table-responsive-lg width85pcmobile99pc marginAuto emberekDiv">
-        <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom5">
+        <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom5" style="border-top: 17px solid #16181c;">
             <thead>
               <tr>
                 <th class='alignCenter' scope="col">#</th>
@@ -28,7 +28,7 @@
               </tr>
             </thead>
             <tbody>
-                    <tr style='border-bottom:5px solid #3d444b;border-top:5px solid #3d444b;'>
+                    <tr style='border-bottom:3px solid #95999c;border-top:5px solid #3d444b;'>
                         <th class='alignCenter' scope="row"> <input type='checkbox' id='selectAll' class='checkbox checkbox1p5x marginRight0p5'></th>
                         <td class='alignCenter'> Kijelölt emberek: </td>
                         <td class='alignCenter feladatInputTd'> 
@@ -41,11 +41,22 @@
                             <button class='kijeloltEmberekButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Mentés</button>
                         </td>
                         <td class='alignCenter'> 0  </td>
-                        <td class='width5pc'></td>
+                        <td class='width5pc'>
+                            <div class='marginLeft0p5'>
+                            <div class="btn-group dropup margin0 ">
+                              <button type="button" class="btn btn-secondary margin0 borderRadius0p5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="fas fa-ellipsis-h"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+                                <a  class="dropdown-item pointer tobbProfilPontjaiTorleseButton" >Kijelöltek pontjai törlése</a>
+                              </div>
+                            </div>
+                            </div>
+                        </td>
                     </tr>
                     
                <% diakok.forEach(function(diak,index){ %>
-                    <tr name='<%= diak._id %>' id='<%= diak.userId %>'>
+                    <tr name='<%= diak._id %>' id='<%= diak.userId %>' >
                         <th class='alignCenter' scope="row"> <input type='checkbox' class='checkbox diakCheckbox checkbox1p5x marginRight0p5'> <%= index+1 %>.</th>
                         <td class='alignCenter pointer diakNevTd'> <%= diak.nev %> </td>
                         <td class='alignCenter feladatInputTd'> 
@@ -282,7 +293,74 @@
             }
         });
         
-    //PONTOK TÖRLÉSE
+    //KIJELÖLT EMBEREK PONTOK TÖRLÉSE
+        $('.tobbProfilPontjaiTorleseButton').on('click',function(){
+            Swal.fire({
+              title: 'Biztos törlöd?',
+              text: "Törlődni fognak a feladatai és a pontjai is!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              cancelButtonText: 'Mégse',
+              confirmButtonText: 'Törlés!'
+            }).then((result) => {
+              if (result.value) {
+                    var trDarab = $('.nevekTable tr').length-1;
+        		    var mennyiChecked = Number($('.diakCheckbox:checked').length);
+                    
+                    var nevekId = [];
+
+                    var hiba = false;
+                    
+                    if(mennyiChecked==0){
+                        hiba = true;
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Nem jelöltél ki senkit!'
+                        })
+                    }
+                    if(!hiba){
+                        for(var i=0;i<trDarab-1;i++){
+            		        var selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
+            		        if(selectedRow){
+            		            var nevId = $('.nevekTable tr').eq(i+2).attr('name');
+            		            nevekId.push(nevId);
+            		        }
+            		    }
+            		    $.ajax({
+                           type:'POST',
+                           url:'/deletPoints',
+                           dataType:'json',
+                           data:{
+                               osztalyId:osztalyId,
+                               tantargy:tantargy,
+                               nevekId:nevekId,
+                           },
+                           success:function(back){
+                               Swal.fire({
+                                    type: 'success',
+                                    title: 'Törölve',
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                });
+                               setTimeout(function(){location.reload();},800)
+                           },
+                           error:function(){
+                               Swal.fire({
+                                    type: 'error',
+                                    title: 'Oops...',
+                                    text: 'Valami hiba történt, próbáld meg később!'
+                                })
+                           }
+                       });
+                    }
+              }
+            });
+        });
+    
+    //EGY EMBER PONTOK TÖRLÉSE
         $('.profilPontjaiTorleseButton').on('click',function(){
            Swal.fire({
               title: 'Biztos törlöd?',
@@ -295,14 +373,7 @@
               confirmButtonText: 'Törlés!'
             }).then((result) => {
               if (result.value) {
-                Swal.fire({
-                    type: 'success',
-                    title: 'Törölve',
-                    showConfirmButton: false,
-                    timer: 1000
-                });
-                var nevId = $(this).parent().parent().parent().parent().parent().attr('name');
-                var userId = $(this).parent().parent().parent().parent().parent().attr("id");
+                var nevId = [  $(this).parent().parent().parent().parent().parent().attr('name') ];
                 $.ajax({
                    type:'POST',
                    url:'/deletPoints',
@@ -310,10 +381,15 @@
                    data:{
                        osztalyId:osztalyId,
                        tantargy:tantargy,
-                       nevId:nevId,
-                       userId:userId
+                       nevekId:nevId,
                    },
                    success:function(back){
+                       Swal.fire({
+                            type: 'success',
+                            title: 'Törölve',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
                        setTimeout(function(){location.reload();},800)
                    },
                    error:function(){
@@ -323,7 +399,7 @@
                             text: 'Valami hiba történt, próbáld meg később!'
                         })
                    }
-               })
+               });
                     
               }
             });

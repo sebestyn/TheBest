@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>TheBest</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  	<meta name="keywords" content="thebest">
+	<link rel="shortcut icon" href="icon.png">
+<!--NICE ALERT BOX-->
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.all.min.js"></script>
+	<!--CSS-->
+		<link rel='stylesheet' type='text/css' href='../css/header.css'>
+
+    </head>
+    <body>
+
+<script>
+    
+//COOKIE TÖRLÉSE
+    function deleteCookie(cname) {
+        var d = new Date(); //Create an date object
+        d.setTime(d.getTime() - (1000*60*60*24)); //Set the time to the past. 1000 milliseonds = 1 second
+        var expires = "expires=" + d.toGMTString(); //Compose the expirartion date
+        window.document.cookie = cname+"="+"; "+expires;//Set the cookie with name and the expiration date
+     
+    }
+    
+    deleteCookie('username');
+    deleteCookie('password');
+    
+    Swal.fire({
+      type: 'error',
+      title: 'Oops...',
+      text: 'Téves felhasználónév vagy jelszó'
+    }).then(() => {
+      window.location.href = "/login"
+    })
+    
+
+
+
+
+
+</script>
+</body>
+</html>
