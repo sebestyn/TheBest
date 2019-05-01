@@ -149,6 +149,40 @@ SuliDB.create({
                     }
                 })
             });
+        //JELSZÓ VÁLZOZTATÁS
+            app.get('/changepassword',isLoggedIn,function(req, res) {
+                res.render("changePassword.ejs");
+            });
+        
+        //JELSZÓ VÁLTOZTATÁS POST
+        app.post('/changepassword', function(req, res) {
+            var userId = req.user._id;
+            var oldpassword = req.body.oldpassword;
+            var newpassword = req.body.newpassword;
+            
+            User.findOne({ _id: userId },(err, user) => {
+              if (err) {
+                res.json({ success: false, message: 'Próbáld meg újra!' });
+              } else {
+                if (!user) {
+                    res.json({ success: false, message: 'Felhasználó nem létezik!' });
+                } else {
+                  user.changePassword(oldpassword, newpassword, function(err) {
+                     if(err) {
+                              if(err.name === 'IncorrectPasswordError'){
+                                   res.json({ success: false, message: 'Rossz jelszót adtál meg!' }); // Return error
+                              }else {
+                                  res.json({ success: false, message: 'Próbáld meg később!' });
+                              }
+                    } else {
+                      res.json({ success: true, message: 'Elmentve!' });
+                     }
+                   })
+                }
+              }
+            });   
+        });
+            
         //ADATKEZELÉSI FELTÉTEL
             app.get("/feltetel",function(req, res) {
                res.render('feltetel.ejs') 
