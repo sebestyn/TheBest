@@ -300,9 +300,9 @@ SuliDB.create({
                                             'kapott':diak.kapott.reverse()
                                         })
                                     }
-                                })
-                            })
-                        })
+                                });
+                            });
+                        });
                         res.render('student/points.ejs',{pontjaim:pontjaim})
                     }
                 });
@@ -455,25 +455,65 @@ SuliDB.create({
                         console.log('SULI ERROR 2');
                         console.log(err);
                     } else {
-                        var index = suli.osztalyok.findIndex(x => x.nev == nev);
-                        suli.osztalyok[index].tantargyak.push({
-                            "nev": tantargy,
-                            "tanar": req.user.nev,
-                            "tanarId": req.user._id,
-                            "diakok": []
-                        })
-                        suli.save(function(err, data){
-                            if(err){
-                                sikerult = false;
-                                console.log('SULI SUJECT MENTÉS ERROR');
-                                console.log(err);
-                            } else {
-                                console.log(tantargy +' hozzáadva a ' + suli.osztalyok[index].nev + '-hez');
+                        //TANTÁRGY LÉTREHOZÁS
+                            var index = suli.osztalyok.findIndex(x => x.nev == nev);
+                            suli.osztalyok[index].tantargyak.push({
+                                "nev": tantargy,
+                                "tanar": req.user.nev,
+                                "tanarId": req.user._id,
+                                "diakok": []
+                            });
+                        //TANTÁRGYHOZ A DIÁKOK AZ OZTÁLYBÓL AUTOMATIKUS CSATLAKOZÁSA
+                            var lastTantargyIndex = suli.osztalyok[index].tantargyak.length-1;
+                            if (lastTantargyIndex > 0){
+                                suli.osztalyok[index].tantargyak[0].diakok.forEach(function(diak){
+                                     suli.osztalyok[index].tantargyak[ lastTantargyIndex ].diakok.push({
+                                         _id:diak._id,
+                                         nev:diak.nev,
+                                         userId:diak.userId,
+                                         pont:0,
+                                         kapott:[]
+                                    });
+                                });
                             }
-                        });
+                        //MENTÉS
+                            suli.save(function(err, data){
+                                if(err){
+                                    sikerult = false;
+                                    console.log('SULI SUJECT MENTÉS ERROR');
+                                    console.log(err);
+                                } else {
+                                    console.log(tantargy +' hozzáadva a ' + suli.osztalyok[index].nev + '-hez');
+                                }
+                            });
                     }
                 });
                 res.status(200).send({success: sikerult})
+            });
+            
+        //CSOPORT TÖRLÉSE
+            app.post('/deleteGroup',function(req, res) {
+               var osztalyId = req.body.osztalyId;
+               var tantargy = req.body.tantargy
+               SuliDB.findOne({"_id":req.user.suli},function(err, suli) {
+                   if(err){
+                       console.log("GROUP TÖRLÉS ERROR")
+                   } else {
+                      var osztalyIndex = suli.osztalyok.findIndex(x => x._id == osztalyId);
+                      var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => x.nev == tantargy);
+                      var osztalyNev = suli.osztalyok[osztalyIndex].nev;
+                      suli.osztalyok[osztalyIndex].tantargyak.splice(tantargyIndex, 1) 
+                      suli.save(function(err, data){
+                            if(err){
+                                console.log('GROUP TÖRLÉS ERROR 2');
+                                console.log(err);
+                            } else {
+                                console.log(osztalyNev+' ' + tantargy +' törölve');
+                            }
+                        });
+                   }
+               });
+               res.status(200).send({success: true})
             });
         
         //OSZTALYOK LISTÁJA
@@ -505,7 +545,6 @@ SuliDB.create({
                         var osztalyIndex = suli.osztalyok.findIndex(x => String(x._id) == String(classId));
                         var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => String(x.nev) == String(subject));
                         var csoport = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex];
-                        
                         // Ő A CSOPORT TANÁRA?
                             var tanarHozzaferes = false;
                             if(String(csoport.tanarId) == String(req.user._id)){
@@ -760,6 +799,7 @@ SuliDB.create({
 
     //KIJELENTKEZÉS
         app.get('/logout', function(req, res){
+            console.log(req.user.nev + ' logout');
           req.logout();
           res.redirect('/');
         });
