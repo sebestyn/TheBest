@@ -8,7 +8,7 @@
     const              passport = require('passport');
     const         LocalStrategy = require("passport-local");
     const passportLocalMongoose = require('passport-local-mongoose');
-    const                  date = new Date().toDateString();
+    const                  date = new Date().toDateString().slice(4,15);
     const                  User = require("./models/user");
     const                SuliDB = require("./models/suli");
     const            TantargyDB = require("./models/tantargy");

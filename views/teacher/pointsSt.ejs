@@ -114,7 +114,7 @@
 
 
 <script>
-    var date = new Date().toDateString();
+    var date = new Date().toDateString().slice(4,15);
     //TOGGLE FELADATOK
         $('.feladatokTbody').slideUp();
         setTimeout(function(){$('body').css('opacity','1')},400);
@@ -158,6 +158,7 @@
 
     //EGY EMBER ÚJ FELADAT/PONT
         $('.mentesButton').on('click',function(){
+            loaderShow();
             var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
             var pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
             var nevId       = $(this).attr("name");
@@ -175,11 +176,12 @@
             
 
             if(pont=='' && (pont==0 && feladatNev == '')){
+                loaderStop();
                 Swal.fire({
                     type: 'error',
                     title: 'Oops...',
                     text: 'Nem adtad meg a kapott pontot!'
-                })
+                });
             } else {
                 $.ajax({
                     type:'POST',
@@ -192,6 +194,7 @@
                     },
                     success:function(back){
                         if(back.success){
+                            loaderStop();
                             var jelenlegiPont = Number(thisHtml.parent().parent().find('.diakPontTd').text());
                             thisHtml.parent().parent().find('.diakPontTd').text(jelenlegiPont+pont);
                             thisHtml.parent().parent().parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
@@ -203,6 +206,7 @@
                                 timer: 1000
                             });
                         } else {
+                            loaderStop();
                             Swal.fire({
                                 type: 'error',
                                 title: 'Oops...',
@@ -211,6 +215,7 @@
                         }
                     },
                     error:function(){
+                        loaderStop();
                         Swal.fire({
                             type: 'error',
                             title: 'Oops...',
@@ -224,6 +229,7 @@
 
     //KIJELÖLT EMBEREK ÚJ FELADAT/PONT
         $('.kijeloltEmberekButton').on('click',function(){
+            loaderShow();
             var trDarab = $('.nevekTable tr').length-1;
 		    var mennyiChecked = Number($('.diakCheckbox:checked').length);
 		    
@@ -280,6 +286,7 @@
                     },
                     success:function(back){
                         if(back.success){
+                            loaderStop();
                             Swal.fire({
                                 type: 'success',
                                 title: 'Elmentve!',
@@ -288,6 +295,7 @@
                                 timer: 1000
                             });
                         } else {
+                            loaderStop();
                             Swal.fire({
                                 type: 'error',
                                 title: 'Oops...',
@@ -296,6 +304,7 @@
                         }
                     },
                     error:function(){
+                        loaderStop();
                         Swal.fire({
                             type: 'error',
                             title: 'Oops...',
@@ -308,6 +317,7 @@
         
     //KIJELÖLT EMBEREK NULLÁZÁSA = (annyi pontot add hozzá, hogy nulla legyen és ezt nullazas feladat néven menti el)
         $(".tobbProfilNullazasaButton").on("click",function(){
+            loaderShow();
             Swal.fire({
               title: 'Biztos nullázod?',
               text: "Nulla lesz a kijelöltek pontja, de a mentett feladatok nem törlődnek!",
@@ -375,6 +385,7 @@
                                 emberek:emberek
                             },
                             success:function(back){
+                                loaderStop();
                                 if(back.success){
                                     Swal.fire({
                                         type: 'success',
@@ -384,6 +395,7 @@
                                         timer: 1000
                                     });
                                 } else {
+                                    loaderStop();
                                     Swal.fire({
                                         type: 'error',
                                         title: 'Oops...',
@@ -392,6 +404,7 @@
                                 }
                             },
                             error:function(){
+                                loaderStop();
                                 Swal.fire({
                                     type: 'error',
                                     title: 'Oops...',
