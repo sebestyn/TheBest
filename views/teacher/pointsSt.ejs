@@ -137,7 +137,7 @@
      
      var vannakDiakok = !(<%- JSON.stringify(diakok) %>.length == 0);
 
-     
+     //HA NINCS MÉG CSATLAKOZOTT DIÁK SZÖVEG
      if(!vannakDiakok){
         $('.emberekDiv').hide();
         $('.nincsSzoveg').removeClass('hide');
@@ -160,11 +160,18 @@
         $('.mentesButton').on('click',function(){
             var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
             var pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
-            var id          = $(this).attr("name");
+            var nevId       = $(this).attr("name");
             var userId      = $(this).attr('id');
             var osztalyId   = '<%= classId %>';
             var tantargy    = '<%= subject %>'
             var thisHtml = $(this);
+
+            let emberek = [{
+                feladatNev:feladatNev,
+                pont:pont,
+                nevId:nevId,
+                userId:userId
+            }];
             
 
             if(pont=='' && (pont==0 && feladatNev == '')){
@@ -181,10 +188,7 @@
                     data:{
                         osztalyId:osztalyId,
                         tantargy:tantargy,
-                        feladatNev:feladatNev,
-                        pont:pont,
-                        nevekId:[id],
-                        userId:[userId]
+                        emberek:emberek
                     },
                     success:function(back){
                         if(back.success){
@@ -223,13 +227,8 @@
             var trDarab = $('.nevekTable tr').length-1;
 		    var mennyiChecked = Number($('.diakCheckbox:checked').length);
 		    
-		    var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
-            var pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
-            
-            
-            var nevekId = [];
-            var userekId  = [];
-            
+            let emberek = [];
+
             var hiba = false;
             
             if(mennyiChecked==0){
@@ -251,12 +250,23 @@
             
             if(!hiba){
     		    for(var i=0;i<trDarab-1;i++){
-    		        var selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
+                    let selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
+                    
     		        if(selectedRow){
+                        var feladatNev = $('.nevekTable tr').eq(i+2).find(".feladatInputTd").find(".feladatInput").val(); 
+                        var pont = Number($('.nevekTable tr').eq(i+2).find(".pontInputTd").find(".pontInput").val()) ;
     		            var nevId = $('.nevekTable tr').eq(i+2).attr('name');
-    		            var userId = $('.nevekTable tr').eq(i+2).attr('id');
-    		            nevekId.push(nevId);
-    		            userekId.push(userId);
+                        var userId = $('.nevekTable tr').eq(i+2).attr('id');
+                        
+    		            emberek.push({
+                            feladatNev:feladatNev,
+                            pont:pont,
+                            nevId:nevId,
+                            userId:userId
+                        });
+                        var jelenlegiPont = Number($('.nevekTable tr').eq(i+2).find('.diakPontTd').text());
+                		$('.nevekTable tr').eq(i+2).find('.diakPontTd').text(jelenlegiPont+pont);
+                		$('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
     		        }
     		    }
     		    $.ajax({
@@ -266,21 +276,10 @@
                     data:{
                         osztalyId:osztalyId,
                         tantargy:tantargy,
-                        feladatNev:feladatNev,
-                        pont:pont,
-                        nevekId:nevekId,
-                        userId:userekId
+                        emberek:emberek
                     },
                     success:function(back){
                         if(back.success){
-                            for(var i=0;i<trDarab-1;i++){
-                		        var selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
-                		        if(selectedRow){
-                		            var jelenlegiPont = Number($('.nevekTable tr').eq(i+2).find('.diakPontTd').text());
-                		            $('.nevekTable tr').eq(i+2).find('.diakPontTd').text(jelenlegiPont+pont);
-                		            $('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
-                		        }
-                		    }
                             Swal.fire({
                                 type: 'success',
                                 title: 'Elmentve!',
@@ -309,7 +308,100 @@
         
     //KIJELÖLT EMBEREK NULLÁZÁSA = (annyi pontot add hozzá, hogy nulla legyen és ezt nullazas feladat néven menti el)
         $(".tobbProfilNullazasaButton").on("click",function(){
-            
+            Swal.fire({
+              title: 'Biztos nullázod?',
+              text: "Nulla lesz a kijelöltek pontja, de a mentett feladatok nem törlődnek!",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#d33',
+              cancelButtonColor: '#3085d6',
+              cancelButtonText: 'Mégse',
+              confirmButtonText: 'Nullázás!'
+            }).then((result) => {
+                if(result.dismiss != "cancel"){
+                    var trDarab = $('.nevekTable tr').length-1;
+                    var mennyiChecked = Number($('.diakCheckbox:checked').length);
+                    
+                    let emberek = [];
+
+                    var hiba = false;
+                    
+                    if(mennyiChecked==0){
+                        hiba = true;
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Nem jelöltél ki senkit!'
+                        })
+                    }
+                    if(pont=='' && (pont==0 && feladatNev == '')){
+                        hiba = true;
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Nem adtad meg a kapott pontot!'
+                        })
+                    } 
+                    
+                    if(!hiba){
+                        for(var i=0;i<trDarab-1;i++){
+                            let selectedRow = $('.nevekTable tr').eq(i+2).find('th').find('input').is(':checked');
+                            
+                            if(selectedRow){
+                                var feladatNev = "NULLÁZÁS";
+                                var pont = 0 - Number($('.nevekTable tr').eq(i+2).find(".diakPontTd").text()) ;
+                                var nevId = $('.nevekTable tr').eq(i+2).attr('name');
+                                var userId = $('.nevekTable tr').eq(i+2).attr('id');
+                                
+                                emberek.push({
+                                    feladatNev:feladatNev,
+                                    pont:pont,
+                                    nevId:nevId,
+                                    userId:userId
+                                });
+                            }
+                            var jelenlegiPont = Number($('.nevekTable tr').eq(i+2).find('.diakPontTd').text());
+                            $('.nevekTable tr').eq(i+2).find('.diakPontTd').text(jelenlegiPont+pont);
+                            $('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
+                                        
+                        }
+                        $.ajax({
+                            type:'POST',
+                            url:'/newPoint',
+                            dataType:'json',
+                            data:{
+                                osztalyId:osztalyId,
+                                tantargy:tantargy,
+                                emberek:emberek
+                            },
+                            success:function(back){
+                                if(back.success){
+                                    Swal.fire({
+                                        type: 'success',
+                                        title: 'Elmentve!',
+                                        text: '',
+                                        showConfirmButton: false,
+                                        timer: 1000
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        type: 'error',
+                                        title: 'Oops...',
+                                        text: 'Valami hiba történt, próbáld meg később!'
+                                    });
+                                }
+                            },
+                            error:function(){
+                                Swal.fire({
+                                    type: 'error',
+                                    title: 'Oops...',
+                                    text: 'Valami hiba történt, próbáld meg később!'
+                                })
+                            }
+                        });
+                    }
+                }
+            });
         });
 
     //KIJELÖLT EMBEREK PONTOK TÖRLÉSE

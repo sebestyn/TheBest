@@ -507,35 +507,32 @@
                     } else {
                         var osztalyId = req.body.osztalyId;
                         var tantargy = req.body.tantargy;
-                        var feladatNev = req.body.feladatNev;
-                        var pont = req.body.pont;
-                        var nevekId = req.body.nevekId;
-                        var userId  = req.body.userId;
+                        var diakok = req.body.emberek;
                         var osztalyIndex = suli.osztalyok.findIndex(x => String(x._id) == String(osztalyId));
                         var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => String(x.nev) == String(tantargy));
                         //DIÁKONKÉNT
-                            nevekId.forEach(function(nevId,index){
+                            diakok.forEach(function(diak,index){
                                 //PONT FRISSÍTÉSE
-                                    var diakIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
-                                    suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].pont += Number(pont);
+                                    var diakIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(diak.nevId))
+                                    suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].pont += Number(diak.pont);
                                 //FELADAT OBJECT
                                     var feladatObj = {
                                         tantargy:tantargy,
-                                        nev:feladatNev,
-                                        pont:pont,
+                                        nev:diak.feladatNev,
+                                        pont:diak.pont,
                                         mikor:date
                                     }
                                 //FELADAT OBJECT SULI DB-be
                                     suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].kapott.push(feladatObj);
                                 //FELADAT OBJECT USER DB-be
-                                    User.findOne({'_id':userId[index]},function(err, diak) {
+                                    User.findOne({'_id':diak.userId},function(err, diakDBbol) {
                                         if(err){
                                             sikerult = false;
                                             console.log('SULI SUJECT MENTÉS ERROR 2');
                                             console.log(err);
                                         } else {
-                                            diak.kapott.push(feladatObj);
-                                            diak.save(function(){
+                                            diakDBbol.kapott.push(feladatObj);
+                                            diakDBbol.save(function(){
                                                if(err){
                                                     sikerult = false;
                                                     console.log('SULI SUJECT MENTÉS ERROR 3');
@@ -552,7 +549,7 @@
                                     console.log('SULI SUJECT MENTÉS ERROR 4');
                                     console.log(err);
                                 } else {
-                                    console.log('feladat név: '+feladatNev + ', pont: '+pont );
+                                    console.log('Új feladat mentve!');
                                 }
                             });
                     }
