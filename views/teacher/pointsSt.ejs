@@ -16,7 +16,7 @@
     <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott!</h1>
     
     <div class="table-responsive-lg width85pcmobile99pc marginAuto emberekDiv">
-        <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom5" style="border-top: 17px solid #16181c;">
+        <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom1" style="border-top: 17px solid #16181c;">
             <thead>
               <tr>
                 <th class='alignCenter' scope="col">#</th>
@@ -33,10 +33,10 @@
                         <th class='alignCenter' scope="row"> <input type='checkbox' id='selectAll' class='checkbox checkbox1p5x marginRight0p5'></th>
                         <td class='alignCenter'> Kijelölt emberek: </td>
                         <td class='alignCenter feladatInputTd'> 
-                            <input type="text" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
+                            <input type="text" id="foFeladatInput" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
                         </td>
                         <td class='alignCenter pontInputTd'> 
-                            <input type="number" class="pontInput form-control hideArrowNumberInput maxWidth60pIfNotMobile marginAuto"  placeholder="Pont" aria-label="Pont" aria-describedby="basic-addon1">
+                            <input type="number" id="foPontInput" class="pontInput form-control hideArrowNumberInput maxWidth60pIfNotMobile marginAuto"  placeholder="Pont" aria-label="Pont" aria-describedby="basic-addon1">
                         </td>
                         <td class='alignCenter'> 
                             <button class='kijeloltEmberekButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Mentés</button>
@@ -49,6 +49,7 @@
                                   <i class="fas fa-ellipsis-h"></i>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+                                <a  class="dropdown-item pointer tobbProfilNullazasaButton" >Kijelöltek NULLÁZÁSA</a>
                                 <a  class="dropdown-item pointer tobbProfilPontjaiTorleseButton" >Kijelöltek pontjai törlése</a>
                               </div>
                             </div>
@@ -105,7 +106,7 @@
     </div>
     
     <center>
-        <button id='csoportTorleseButton' class='btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Csoport törlése</button>
+        <button id='csoportTorleseButton' class='btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover margin2'>Csoport törlése</button>
     </center>
     
 </div>
@@ -141,7 +142,20 @@
         $('.emberekDiv').hide();
         $('.nincsSzoveg').removeClass('hide');
      }
-        
+       
+     
+    //FŐ FELADAT/POST INPUTBA ÍRÁSKOR AZ ÖSSZES FELADAT/PONT INPUTBA
+        $('#foFeladatInput').on("keydown",function(){
+            setTimeout(function(){
+                $(".feladatInput").val( $('#foFeladatInput').val() )
+            },1) 
+        });
+        $('#foPontInput').on("keydown",function(){
+            setTimeout(function(){
+                $(".pontInput").val( $('#foPontInput').val() )
+            },1) 
+        });
+
     //EGY EMBER ÚJ FELADAT/PONT
         $('.mentesButton').on('click',function(){
             var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
@@ -203,7 +217,6 @@
             }
             
         });
-
 
     //KIJELÖLT EMBEREK ÚJ FELADAT/PONT
         $('.kijeloltEmberekButton').on('click',function(){
@@ -294,6 +307,11 @@
             }
         });
         
+    //KIJELÖLT EMBEREK NULLÁZÁSA = (annyi pontot add hozzá, hogy nulla legyen és ezt nullazas feladat néven menti el)
+        $(".tobbProfilNullazasaButton").on("click",function(){
+            
+        });
+
     //KIJELÖLT EMBEREK PONTOK TÖRLÉSE
         $('.tobbProfilPontjaiTorleseButton').on('click',function(){
             Swal.fire({
@@ -405,6 +423,7 @@
               }
             });
         });
+    
     //PROFIL TÖRLÉSE A CSOPORTBÓL
         $('.profilTorleseButton').on('click',function(){
             Swal.fire({
