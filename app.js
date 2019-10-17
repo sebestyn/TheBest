@@ -1,28 +1,21 @@
 //BEHÍVÁS
-    var               helyiDB = false;
-    var        methodOverride = require("method-override");
-    var               express = require("express");
-    var                   app = express();
-    var            bodyParser = require("body-parser");
-    var              mongoose = require("mongoose");
-    var              passport = require('passport');
-    var         LocalStrategy = require("passport-local");
-    var passportLocalMongoose = require('passport-local-mongoose');
-    var                  date = new Date().toDateString();
-    var                  User = require("./models/user");
-    var                SuliDB = require("./models/suli");
-    var            TantargyDB = require("./models/tantargy");
-    var       BelepesiKodokDB = require("./models/belepesiKodok");
-    
-
-
-
-
-
-
-
+    const        halozatiServer = true;
+    const        methodOverride = require("method-override");
+    const               express = require("express");
+    const                   app = express();
+    const            bodyParser = require("body-parser");
+    const              mongoose = require("mongoose");
+    const              passport = require('passport');
+    const         LocalStrategy = require("passport-local");
+    const passportLocalMongoose = require('passport-local-mongoose');
+    const                  date = new Date().toDateString();
+    const                  User = require("./models/user");
+    const                SuliDB = require("./models/suli");
+    const            TantargyDB = require("./models/tantargy");
+    const       BelepesiKodokDB = require("./models/belepesiKodok");
 
 //////////////////////////////////////////////////////////////////////////////////////////
+
 //USE
     app.use(express.static('public'));
     app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:100000}));
@@ -30,11 +23,10 @@
 
 //ADATBÁZIS
     //ADATBÁZIS HELYE
-        if(helyiDB){
-            mongoose.connect('mongodb://localhost/thebest', { useNewUrlParser: true });
-        }else{
-            mongoose.connect('mongodb://sebestyn:thebest2019@ds143242.mlab.com:43242/thebest', { useNewUrlParser: true });
-        }
+    mongoose.connect('mongodb+srv://sebestyn:sebestyn@cluster0-uek7j.gcp.mongodb.net/theBest?retryWrites=true&w=majority', 
+                    { useNewUrlParser: true, useUnifiedTopology: true  },
+                    ()=>console.log('DATABASE CONNECTED')
+                    );
         
 //Authentication -> belépés/regisztráció
     app.use(require("express-session")({
@@ -47,7 +39,6 @@
     passport.use(new LocalStrategy(User.authenticate()));
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
-    
     app.use(function(req,res,next){
         res.locals.user = req.user;
         if(req.user){
@@ -56,66 +47,8 @@
         next();
     })
 
-
-
-
-
-
-/*
-TantargyDB.create({
-   nev:'matematika' 
-});
-TantargyDB.create({
-   nev:'angol' 
-});
-TantargyDB.create({
-   nev:'német' 
-});
-TantargyDB.create({
-   nev:'biológia' 
-});
-TantargyDB.create({
-   nev:'történelem' 
-});
-TantargyDB.create({
-   nev:'fizika' 
-});
-TantargyDB.create({
-   nev:'földrajz' 
-});
-TantargyDB.create({
-   nev:'nyelvtan' 
-});
-TantargyDB.create({
-   nev:'kémia' 
-});
-TantargyDB.create({
-   nev:'irodalom' 
-});
-
-Sugit liDB.create({
-    nev:'Budapest VI. Kerületi Kölcsey Ferenc Gimnázium',
-    osztalyok:[]
-})
-
-SuliDB.create({
-    nev:'Szinyei Merse Pál Gimnázium',
-    osztalyok:[]
-});
-SuliDB.create({
-    nev:'Madách Imre Gimnázium',
-    osztalyok:[]
-});
-SuliDB.create({
-    nev:'Szent István Gimnázium',
-    osztalyok:[]
-});
-*/
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////
+//alapokMenteseAdatbazisba()
 
 //OLDALAK (GET)
     
@@ -612,6 +545,7 @@ SuliDB.create({
                                         }
                                     }); 
                             });
+                            suli.markModified('osztalyok');
                             suli.save(function(err, data){
                                 if(err){
                                     sikerult = false;
@@ -810,16 +744,16 @@ SuliDB.create({
 
     //MÁS OLDAL -> VISSZA HOME OLDALRA
         app.get('/:s',function(req,res){
-            res.render('home.ejs');
+            res.redirect('/');
         });
         app.get('/:s/:s',function(req,res){
-            res.render('home.ejs');
+            res.redirect('/');
         });
         app.get('/:s/:s/:s',function(req,res){
-            res.render('home.ejs');
+            res.redirect('/');
         });
         app.get('/:s/:s/:s/:s',function(req,res){
-            res.render('home.ejs');
+            res.redirect('/');
         });
 
 
@@ -922,14 +856,70 @@ SuliDB.create({
             return tantargyakSzerint
         }
 
+    //ÜRES ADATBÁZISBA MENTÉS ALAPOK (TANTÁRGYAK,ISKOLÁK...)
+        function alapokMenteseAdatbazisba(){
+            //TANTÁRGYAK
+            TantargyDB.create({
+                nev:'matematika' 
+             });
+             TantargyDB.create({
+                nev:'angol' 
+             });
+             TantargyDB.create({
+                nev:'német' 
+             });
+             TantargyDB.create({
+                nev:'biológia' 
+             });
+             TantargyDB.create({
+                nev:'történelem' 
+             });
+             TantargyDB.create({
+                nev:'fizika' 
+             });
+             TantargyDB.create({
+                nev:'földrajz' 
+             });
+             TantargyDB.create({
+                nev:'nyelvtan' 
+             });
+             TantargyDB.create({
+                nev:'kémia' 
+             });
+             TantargyDB.create({
+                nev:'irodalom' 
+             });
+             //SULIK
+             SuliDB.create({
+                 nev:'Budapest VI. Kerületi Kölcsey Ferenc Gimnázium',
+                 osztalyok:[]
+             })
+             SuliDB.create({
+                 nev:'Szinyei Merse Pál Gimnázium',
+                 osztalyok:[]
+             });
+             SuliDB.create({
+                 nev:'Madách Imre Gimnázium',
+                 osztalyok:[]
+             });
+             SuliDB.create({
+                 nev:'Szent István Gimnázium',
+                 osztalyok:[]
+             });
+        }
 
 
-
-//SERVER INDÍTÁSA
-    app.listen(process.env.PORT, process.env.IP, function(){
-        console.log('TheBest c9-server is RUNNING')
+//SERVER INDÍTÁSA  
+if(halozatiServer){
+    var port = process.env.PORT || 4000;
+    app.listen(port, function () {
+    console.log("MYNEWS Server Has Started!");
     });
-    
+} else {
+    app.listen(process.env.PORT, process.env.IP, function () {
+        console.log("SERVER IS RUNNING...");
+    });
+}
     
     
     

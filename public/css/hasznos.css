@@ -190,6 +190,14 @@
       width:99%;
     }
   }
+  .width15pcmobile50pc{
+    width:15%;
+  }
+  @media only screen and (max-width: 1000px) {
+    .width15pcmobile50pc{
+      width:50%;
+    }
+  }
   .width30pcmobile90pc{
       width:30%;
   }
@@ -298,6 +306,10 @@
   }
   .marginAuto{
     margin:auto;
+  }
+  .marginLeftRightAuto{
+    margin-left: auto;
+    margin-right: auto;
   }
   .padding0p5{
     padding: 0.5rem;

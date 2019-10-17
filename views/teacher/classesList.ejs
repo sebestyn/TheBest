@@ -12,13 +12,26 @@
         <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Osztályok lista</h1>
         
         <table class='alignCenter white marginAuto fontSize2remMobile6vw'>
-            <% osztalyok.forEach(function(osztaly){ %>
-                <tr>
-                    <td><%= osztaly %></td>
-                </tr>
-            <% }) %>
+            <% if(osztalyok.length >0){ %>
+                <% osztalyok.forEach(function(osztaly){ %>
+                    <tr>
+                        <td><%= osztaly %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw'>Még nincs egy osztály se hozzáadva!</h1>
+            <% } %>
         </table>
-        
+        <div class="container width50pcIfNotM marginTop3">
+          <div class="row">
+            <div class="col-sm alignCenter margin1">
+              <a href="/newClassTe" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover fontSize1p5 pointer" id=''>Új osztály</a>
+            </div>
+            <div class="col-sm alignCenter margin1 marginBottom5">
+              <a href="/newSubjectTe" class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover fontSize1p5 pointer" id=''>Már létezik</a>
+            </div>
+          </div>
+        </div>
     
 </div>
 

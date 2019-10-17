@@ -12,7 +12,8 @@
     <h1 class='alignCenter white marginTop1 fontFamilyCourier fontSize4remMobile9vw '><%= tantargy %></h1>   
     <h1 class='alignCenter white  fontFamilyCourier fontSize2remMobile6vw '><%= osztaly %><span class='fontSize1p2'> (kód:<%= kod %>)</span></h1>  
     
-    <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott</h1>
+    <p class="alignCenter"><img class="margrin1 width15pcmobile50pc hide nincsSzoveg" src="/nothing_found.png"></p>
+    <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott!</h1>
     
     <div class="table-responsive-lg width85pcmobile99pc marginAuto emberekDiv">
         <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom5" style="border-top: 17px solid #16181c;">
@@ -117,7 +118,7 @@
         $('.feladatokTbody').slideUp();
         setTimeout(function(){$('body').css('opacity','1')},400);
         $('.diakNevTd').on('click',function(){
-              $(this).parent().parent().next('tbody').slideToggle(500)  
+              $(this).parent().parent().next('tbody').slideToggle(10)  
         });
         
     //CHECKBOX 

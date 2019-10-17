@@ -37,10 +37,14 @@
             </tr>
             <tbody class='feladatokTbody'>
                 <tr class="table-secondary black">
-                    <td></td>
-                    <td>Dátum</td>
-                    <td>Feladat</td>
-                    <td>Pont</td>
+                    <% if(pont.kapott.length != 0){ %>
+                        <td></td>
+                        <td>Dátum</td>
+                        <td>Feladat</td>
+                        <td>Pont</td>
+                    <% } else { %>
+                        <td colspan="4" class="alignCenter">Még nincs mentett pont!</td>
+                    <% } %>
                 </tr>
                 <% if(pont.kapott != undefined){ %>
                     <% pont.kapott.forEach(function(feladat){ %>
@@ -68,10 +72,12 @@
 <script>
     //TOGGLE FELADATOK
         $('.feladatokTbody').slideUp();
-        setTimeout(function(){$('body').css('opacity','1')},400);
+        setTimeout(function(){
+            $('body').css('opacity','1');
+        },400);
         
         $('.pontTr').on('click',function(){
-              $(this).parent().next('tbody').slideToggle(500);
+              $(this).parent().next('tbody').slideToggle(1);
         });
         
       var pontjaim = <%- JSON.stringify(pontjaim) %>;

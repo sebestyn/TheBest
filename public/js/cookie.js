@@ -1,10 +1,9 @@
-
 //ÚJ COOKIE
     function setCookie(cname, cvalue, exdays) {
       var d = new Date();
       d.setTime(d.getTime() + (exdays*24*60*60*1000));
       var expires = "expires="+ d.toUTCString();
-      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+      document.cookie = cname + "=" + encrypt(cvalue) + ";" + expires + ";path=/";
     }
 
 //MEGLÉVŐ COOKIE KERESÉSE
@@ -18,7 +17,7 @@
           c = c.substring(1);
         }
         if (c.indexOf(name) == 0) {
-          return c.substring(name.length, c.length);
+          return decrypt(c.substring(name.length, c.length));
         }
       }
       return "";
@@ -54,4 +53,27 @@ function checkCookie() {
   } else {
     return false
   }
+}
+
+
+function encrypt(word){
+  let encryptedWord = [];
+  word = word.split("").reverse();
+  word.forEach(function(character){
+    let newCharacterAscii = parseFloat( character.charCodeAt(0) );
+    newCharacterAscii = (((newCharacterAscii-1) / 2) + 135) * 3
+    encryptedWord.push(newCharacterAscii)
+  });
+  encryptedWord = encryptedWord.join("-");
+  return encryptedWord
+}
+function decrypt(word){
+  word = word.split('-')
+  let decrypedText = [];
+  word.forEach(function(number){
+    let decrypedNumber = (((number / 3) - 135) * 2) + 1
+    decrypedText.push( String.fromCharCode(decrypedNumber) );
+  });
+  decrypedText = decrypedText.reverse().join("")
+  return decrypedText;
 }

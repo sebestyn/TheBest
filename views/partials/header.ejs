@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   	<meta name="keywords" content="thebest">
-	  <link rel="shortcut icon" href="icon.png">
+	<link rel="shortcut icon" href="icon.png">
 	<!--FONTAWSOME-->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 	<!--JQUERY-->
@@ -58,28 +58,8 @@
 <script>
 	loaderShow()
 	$('document').ready(function(){
-		loaderShow()
-
-		//COOKIE TESTER
-			var user = '<%- JSON.stringify(user) %>';
-			console.log(checkCookie())
-			if(checkCookie() && !Boolean(user) ){
-				$('body').append('<form action="/login" method="POST" class="hide"><input id="usernameInput12" name="username" type="text" ><input id="passwordInput12" name="password" type="password" ><button id="loginButton12"></button></form>');
-				$('#usernameInput12').val(checkCookie().username);
-				$('#passwordInput12').val(checkCookie().password);
-				$('#loginButton12').click()
-			}
-
-			else{
-				loaderStop()
-			}
-		
-	});
-	
-
-    
-	
-	
+		loaderStop()
+	});	
 	
 </script>
     
