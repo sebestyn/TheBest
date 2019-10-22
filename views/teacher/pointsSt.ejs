@@ -15,8 +15,12 @@
     <p class="alignCenter"><img class="margrin1 width15pcmobile50pc hide nincsSzoveg" src="/nothing_found.png"></p>
     <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott!</h1>
     
+    <div class="marginAuto block alignCenter">
+        <p class="white" >Keresés név alapján: <input class="maxWidth90pIfNotMobile" id="keresesInput" type="text" > </p>
+    </div>
+
     <div class="table-responsive-lg width85pcmobile99pc marginAuto emberekDiv">
-        <table class="nevekTable table table-dark marginTop2 borderRadius1em tablePontok marginBottom1" style="border-top: 17px solid #16181c;">
+        <table class="nevekTable table table-dark  borderRadius1em tablePontok marginBottom1" style="border-top: 17px solid #16181c;">
             <thead>
               <tr>
                 <th class='alignCenter' scope="col">#</th>
@@ -27,40 +31,39 @@
                 <th class='alignCenter' scope="col">Pont</th>
                 <th class='alignCenter' scope="col">Egyéb</th>
               </tr>
+              <tr style='border-bottom:3px solid #95999c;border-top:5px solid #3d444b;'>
+                <th class='alignCenter' scope="row"> <input type='checkbox' id='selectAll' class='checkbox checkbox1p5x marginRight0p5'></th>
+                <td class='alignCenter'> Kijelölt emberek: </td>
+                <td class='alignCenter feladatInputTd'> 
+                    <input type="text" id="foFeladatInput" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
+                </td>
+                <td class='alignCenter pontInputTd'> 
+                    <input type="number" id="foPontInput" class="pontInput form-control hideArrowNumberInput maxWidth60pIfNotMobile marginAuto"  placeholder="Pont" aria-label="Pont" aria-describedby="basic-addon1">
+                </td>
+                <td class='alignCenter'> 
+                    <button class='kijeloltEmberekButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Összes mentés</button>
+                </td>
+                <td class='alignCenter'> 0  </td>
+                <td class='width5pc'>
+                    <div class='marginLeft0p5'>
+                    <div class="btn-group dropup margin0 ">
+                      <button type="button" class="btn btn-secondary margin0 borderRadius0p5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="fas fa-ellipsis-h"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+                        <a  class="dropdown-item pointer tobbProfilNullazasaButton" >Kijelöltek NULLÁZÁSA</a>
+                        <a  class="dropdown-item pointer tobbProfilPontjaiTorleseButton" >Kijelöltek pontjai törlése</a>
+                      </div>
+                    </div>
+                    </div>
+                </td>
+              </tr>
             </thead>
-            <tbody>
-                    <tr style='border-bottom:3px solid #95999c;border-top:5px solid #3d444b;'>
-                        <th class='alignCenter' scope="row"> <input type='checkbox' id='selectAll' class='checkbox checkbox1p5x marginRight0p5'></th>
-                        <td class='alignCenter'> Kijelölt emberek: </td>
-                        <td class='alignCenter feladatInputTd'> 
-                            <input type="text" id="foFeladatInput" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
-                        </td>
-                        <td class='alignCenter pontInputTd'> 
-                            <input type="number" id="foPontInput" class="pontInput form-control hideArrowNumberInput maxWidth60pIfNotMobile marginAuto"  placeholder="Pont" aria-label="Pont" aria-describedby="basic-addon1">
-                        </td>
-                        <td class='alignCenter'> 
-                            <button class='kijeloltEmberekButton btn white borderA bgColorBlack colorBlackHover width100pc bgColorWhiteHover colorBlackHover'>Mentés</button>
-                        </td>
-                        <td class='alignCenter'> 0  </td>
-                        <td class='width5pc'>
-                            <div class='marginLeft0p5'>
-                            <div class="btn-group dropup margin0 ">
-                              <button type="button" class="btn btn-secondary margin0 borderRadius0p5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i class="fas fa-ellipsis-h"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
-                                <a  class="dropdown-item pointer tobbProfilNullazasaButton" >Kijelöltek NULLÁZÁSA</a>
-                                <a  class="dropdown-item pointer tobbProfilPontjaiTorleseButton" >Kijelöltek pontjai törlése</a>
-                              </div>
-                            </div>
-                            </div>
-                        </td>
-                    </tr>
-                    
+            <tbody>                    
                <% diakok.forEach(function(diak,index){ %>
                     <tr name='<%= diak._id %>' id='<%= diak.userId %>' >
                         <th class='alignCenter' scope="row"> <input type='checkbox' class='checkbox diakCheckbox checkbox1p5x marginRight0p5'> <%= index+1 %>.</th>
-                        <td class='alignCenter pointer diakNevTd'> <%= diak.nev %> </td>
+                        <td class='alignCenter pointer diakNevTd diakNevTd'> <%= diak.nev %> </td>
                         <td class='alignCenter feladatInputTd'> 
                             <input type="text" class="feladatInput form-control marginAuto maxWidth90pIfNotMobile" placeholder="Feladat" aria-label="Feladat" aria-describedby="basic-addon1">
                         </td>
@@ -115,6 +118,24 @@
 
 <script>
     var date = new Date().toDateString().slice(4,15);
+
+    //NÉV KERESÉS
+    jQuery.expr[':'].icontains = function(a, i, m) {
+        return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+    };
+    $('#keresesInput').bind("keyup",function(){
+        let as = $('#keresesInput').val();
+        //var as = asd.toLowerCase();
+        //HA ÜRED A KERESŐ
+        if(as==''){
+            $("tbody tr").css("display", "table-row");               
+        }else{
+            $("tbody tr").css("display", "none");
+            $('.cimekTable').css("display", "table-row");
+            $(".diakNevTd:icontains("+as+")").parent().css("display", "table-row");
+        }
+    });
+
     //TOGGLE FELADATOK
         $('.feladatokTbody').slideUp();
         setTimeout(function(){$('body').css('opacity','1')},400);

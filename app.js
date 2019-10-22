@@ -8,6 +8,7 @@
     const              passport = require('passport');
     const         LocalStrategy = require("passport-local");
     const passportLocalMongoose = require('passport-local-mongoose');
+    const                multer = require('multer');
     const                  date = new Date().toDateString().slice(4,15);
     const                  User = require("./models/user");
     const                SuliDB = require("./models/suli");
@@ -20,6 +21,19 @@
     app.use(express.static('public'));
     app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:100000}));
     app.use(express.json({limit: '100mb'}));
+
+// SET MULTER STORAGE -> SAVE FILES TO SERVER DISK WITH MULTER
+/*
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null, date + "-" +file.fieldname )
+    }
+  })
+var upload = multer({ storage: storage })
+*/
 
 //ADATBÁZIS
     //ADATBÁZIS HELYE
