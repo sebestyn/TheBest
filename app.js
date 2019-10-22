@@ -485,7 +485,7 @@ var upload = multer({ storage: storage })
                 var classId = req.params.classId;
                 var subject = req.params.subject;
                 SuliDB.findOne({'_id':req.user.suli},function(err, suli){
-                    if(err){
+                    if(err || classId=="" || subject==""){
                         console.log("SULI ERROR 5");
                         console.log(err);
                     } else {
