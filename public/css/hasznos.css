@@ -344,6 +344,9 @@
     -webkit-appearance: none; 
     margin: 0; 
   }
+  .hideArrowNumberInput {
+    -moz-appearance:textfield; /* Firefox */
+  }
   .borderRadius1em{
     border-radius: 1em;
   }
