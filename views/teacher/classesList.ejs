@@ -15,7 +15,8 @@
             <% if(osztalyok.length >0){ %>
                 <% osztalyok.forEach(function(osztaly){ %>
                     <tr>
-                        <td><%= osztaly %></td>
+                        <td><%= osztaly.nev %></td>
+                        <td> <span style="margin-left: 1rem; font-size: 1rem;">(kód:<%= osztaly.kod %>)</span> </td>
                     </tr>
                 <% }) %>
             <% } else { %>

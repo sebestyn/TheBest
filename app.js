@@ -473,7 +473,7 @@ var upload = multer({ storage: storage })
                             console.log(err);
                        } else {
                            suli.osztalyok.forEach(function(osztaly){
-                              osztalyok.push(osztaly.nev) 
+                              osztalyok.push({nev:osztaly.nev,kod:osztaly.kod});
                            });
                            res.render('teacher/classesList.ejs',{osztalyok:osztalyok})
                        }
