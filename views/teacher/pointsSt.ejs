@@ -15,7 +15,7 @@
     <p class="alignCenter"><img class="margrin1 width15pcmobile50pc hide nincsSzoveg" src="/nothing_found.png"></p>
     <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott!</h1>
     
-    <div class="marginAuto block alignCenter">
+    <div class="marginAuto block alignCenter keresesNevAlapjanDiv">
         <p class="white" >Keresés név alapján: <input class="maxWidth90pIfNotMobile" id="keresesInput" type="text" > </p>
     </div>
 
@@ -160,6 +160,7 @@
 
      //HA NINCS MÉG CSATLAKOZOTT DIÁK SZÖVEG
      if(!vannakDiakok){
+         $(".keresesNevAlapjanDiv").hide();
         $('.emberekDiv').hide();
         $('.nincsSzoveg').removeClass('hide');
      }
