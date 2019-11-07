@@ -17,6 +17,7 @@ var UserSchema = new mongoose.Schema({
                 },
                 pont:Number,
                 kapott:[{
+                    feladat_id:String,
                     nev:String,
                     tantargy:String,
                     mikor:String,

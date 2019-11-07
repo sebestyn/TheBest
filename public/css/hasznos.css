@@ -270,7 +270,7 @@
     margin-top: -1rem;
   }
   .marginTop0{
-    margin-top: 0rem;
+    margin-top: 0rem !important;
   }
   .marginTop1{
     margin-top: 1rem;

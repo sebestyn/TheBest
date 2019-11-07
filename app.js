@@ -321,7 +321,6 @@ var upload = multer({ storage: storage })
                 var kod = req.body.kod;
                 var tantargy = req.body.tantargy;
                 var sikerult = true;
-                
                 var ujOsztaly = {
                         nev:nev,
                         kod:kod,
@@ -332,7 +331,6 @@ var upload = multer({ storage: storage })
                             diakok:[]
                         }]
                     };
-                
                 //KÓD MENTÉSE DB-be
                     BelepesiKodokDB.create({
                         kod:Number(kod)
@@ -531,11 +529,13 @@ var upload = multer({ storage: storage })
                                     suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].pont += Number(diak.pont);
                                 //FELADAT OBJECT
                                     var feladatObj = {
+                                        feladat_id: idGenerator(8),
                                         tantargy:tantargy,
                                         nev:diak.feladatNev,
                                         pont:diak.pont,
                                         mikor:date
                                     }
+                                    console.log(feladatObj);
                                 //FELADAT OBJECT SULI DB-be
                                     suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].kapott.push(feladatObj);
                                 //FELADAT OBJECT USER DB-be
@@ -569,6 +569,69 @@ var upload = multer({ storage: storage })
                     }
                 })
                 res.status(200).send({success: sikerult})
+            });
+        //FELADAT VÁLTOZTATÁSA POST
+            app.post('/changeTask',function(req,res){
+                //console.log(req.body)
+                let osztalyId = req.body.osztalyId;
+                let tantargy = req.body.tantargy;
+                let nevId = req.body.nevId;
+                let userId = req.body.userId;
+                let feladatId = req.body.feladatId;
+                let feladatNev = req.body.feladatNev;
+                let feladatPont = Number(req.body.feladatPont);
+                let sikerult = true;
+
+                SuliDB.findOne({'_id':req.user.suli},function(err, suli){
+                    if(err){
+                        sikerult = false;
+                        console.log("SULI ERROR 16");
+                        console.log(err);
+                    } else {
+                        var osztalyIndex = suli.osztalyok.findIndex(x => String(x._id) == String(osztalyId));
+                        var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => String(x.nev) == String(tantargy));
+                        var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
+                        var feladatIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott.findIndex(x =>String(x.feladat_id) == String(feladatId))
+
+                        //SULI DB
+                        let pontKulonbseg = feladatPont - suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott[feladatIndex].pont;
+                            //PONT VALTOZTATÁS
+                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].pont += pontKulonbseg;
+                            //FELADAT VÁLTOZTATÁS
+                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott[feladatIndex].nev = feladatNev;
+                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott[feladatIndex].pont = feladatPont;
+                        suli.save(function(err){
+                            if(err){
+                                sikerult = false;
+                                console.log("SULI ERROR 15");
+                                console.log(err);
+                            } else {
+                                //USER DB
+                                User.findOne({'_id':userId},function(err, diakDBbol) {
+                                    if(err){
+                                        sikerult = false;
+                                        console.log('SULI  ERROR 12');
+                                        console.log(err);
+                                    } else {
+                                        let kapottIndex = diakDBbol.kapott.findIndex(x =>String(x.feladat_id) == String(feladatId));
+                                        diakDBbol.kapott[kapottIndex].nev = feladatNev;
+                                        diakDBbol.kapott[kapottIndex].pont = feladatPont;
+                                        diakDBbol.save(function(err){
+                                            if(err){
+                                                sikerult = false;
+                                                console.log('SULI  ERROR 13');
+                                                console.log(err);
+                                            } else {
+                                                console.log('Feladat szerkesztve!');
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                res.status(200).send({success: sikerult});
             });
         //PONTOK/FELADATOK TÖRLÉSE
             app.post('/deletPoints',function(req, res) {
@@ -626,15 +689,25 @@ var upload = multer({ storage: storage })
                         var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
                         
                         //SULIDB-ből TÖRLÉS
-                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].remove()
-
+                        suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].remove()
                         suli.save(function(err, data){
                             if(err){
                                 sikerult = false;
-                                console.log('SULI SUJECT MENTÉS ERROR 6');
+                                console.log('SULI TÖRLÉS ERROR 1');
                                 console.log(err);
                             } else {
-                                console.log(nevId +' pontjai törölve' );
+                                console.log(nevId +' törölve ' + osztalyId + ' csoportból' );
+                                //USER DB-ből TÖRLÉS
+                                User.findOne({'_id':userId},function(err, diakDBbol) {
+                                    if(err){
+                                        sikerult = false;
+                                        console.log('SULI TÖRLÉS ERROR 2');
+                                        console.log(err);
+                                    } else {
+                                        diakDBbol.osztalyok.splice(diakDBbol.osztalyok.indexOf(osztalyId),1)
+                                        diakDBbol.save();
+                                    }
+                                });
                             }
                         });
                     }
@@ -866,6 +939,17 @@ var upload = multer({ storage: storage })
             });
             return tantargyakSzerint
         }
+    //ID GENERATOR
+        function idGenerator(id_length=4){
+            let ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
+            var d = new Date();
+            var id = d.getTime()
+            for (var i = 0; i < id_length; i++) {
+                id += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+            }
+            return id;
+        }
+        
 
     //ÜRES ADATBÁZISBA MENTÉS ALAPOK (TANTÁRGYAK,ISKOLÁK...)
         function alapokMenteseAdatbazisba(){

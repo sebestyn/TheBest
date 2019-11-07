@@ -31,7 +31,7 @@
           <input id='codeInput' type="number" class="form-control" placeholder="Belépési kód*" aria-label="Username" aria-describedby="basic-addon1">
         </div>
         
-        <div class="input-group mb-3 width30pcmobile90pc marginTop1p5">
+        <div class="input-group mb-3 width30pcmobile90pc marginTop1p5" id="tantargyInputDiv">
           <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1"><i class="fas fa-book"></i></span>
           </div>
@@ -40,6 +40,7 @@
             <% tantargyak.forEach(function(tantargy){ %>
                 <option value="<%= tantargy.nev %>"><%= tantargy.nev %></option>
             <% }) %>
+            <option value="egyeb">Egyéb</option>
           </select>
         </div>
         
@@ -61,16 +62,22 @@
     meglevoKodok.forEach(function(kod){
         meglevoKodokArray.push(kod.kod)
     })
-    
     var tantargyak = <%- JSON.stringify(tantargyak) %>
 
+    //EGYÉB TANTÁRGY
+    $("#tantargyInput").on("change",function(){
+      if( $("#tantargyInput option:selected").val() == "egyeb" ){
+        $("#tantargyInput").remove();
+        $("#tantargyInputDiv").append("<input class='form-control' id='tantargyInput' type='text'>");
+        $("#tantargyInput").focus();
+      }
+    });
+
     $('#osztalyLetrehozasGomb').on('click',function(){
-       
         var osztalyNev = $('#nevInput').val();
         var kod = $('#codeInput').val();
-        var tantargy = $( "#tantargyInput option:selected" ).text();
+        var tantargy = $( "#tantargyInput option:selected" ).text() || $("#tantargyInput").val() ;
         var hiba = false;
-        
         // VAN E ÜRES
             if((osztalyNev=='' || kod=='' || tantargy=='Tantárgy') && !hiba ){
                 hiba = true;
@@ -80,6 +87,7 @@
                   text: 'Nem lehet üres egyik mező sem!'
                 });
             }
+        /*
         // JÓ NÉV FORMÁTUM?
             var holTartalmaz = Number(osztalyNev.indexOf("/"));
             var perElott = osztalyNev.slice(0, holTartalmaz);
@@ -92,17 +100,7 @@
                   text: 'A név rossz formátumban van! ("/" előtt csak szám lehet) '
                 });
             }
-            
-        // KÓD MEGVAN 4 KARAKTER ?
-            if(kod.length < 4 && !hiba){
-                hiba=true;
-                Swal.fire({
-                  type: 'error',
-                  title: 'Oops...',
-                  text: 'Kódnak legalább 4 karakternek kell lennie!'
-                });
-            }
-            
+        */  
         //VAN E MÁR ILYEN KÓD ?
             if((meglevoKodokArray.includes(Number(kod))) && !hiba ){
                 hiba = true;

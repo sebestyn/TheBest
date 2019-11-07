@@ -88,18 +88,22 @@
                             </div>
                         </td>
                     </tr>
-                    <tbody class='feladatokTbody'>
-                        <tr class="table-secondary ">
+                    <tbody class='feladatokTbody' name='<%= diak._id %>' id="<%= diak.userId %>">
+                        <tr class="table-secondary">
                             <td colspan="2" class='alignCenter black'>Időpont</td>
-                            <td colspan="2" class='alignCenter black'>Feladat neve</td>
-                            <td colspan="3" class='alignCenter black'>Pont</td>
+                            <td colspan="1" class='alignCenter black'>Feladat neve</td>
+                            <td colspan="1" class='alignCenter black'>Pont</td>
+                            <td colspan="3"  class='alignCenter black'>Szerkeszt</td>
                         </tr>
                         <% diak.kapott.reverse() %>
                         <% diak.kapott.forEach(function(feladat){ %>
                             <tr class="table-light ">
                                 <td colspan="2" class='alignCenter black'><%= feladat.mikor %></td>
-                                <td colspan="2" class='alignCenter black'><%= feladat.nev %></td>
-                                <td colspan="3" class='alignCenter black'><%= feladat.pont %></td>
+                                <td colspan="1" class='alignCenter black' id="feladatNevTd"><%= feladat.nev %></td>
+                                <td colspan="1" class='alignCenter black' id="feladatPontTd"><%= feladat.pont %></td>
+                                <td colspan="3" class='alignCenter black'>
+                                    <button class="feladatSzerkesztesButton btn btn-warning white width100pc" id="<%= feladat.feladat_id %>">Szerkeszt</button>
+                                </td>
                             </tr>
                         <% }) %>
                     </tbody>
@@ -118,6 +122,9 @@
 
 <script>
     var date = new Date().toDateString().slice(4,15);
+    var osztalyId   = '<%= classId %>';
+    var tantargy    = '<%= subject %>';
+    var vannakDiakok = !(<%- JSON.stringify(diakok) %>.length == 0);
 
     //NÉV KERESÉS
     jQuery.expr[':'].icontains = function(a, i, m) {
@@ -153,10 +160,7 @@
         		selectAllTwo()
         	});
     
-     var osztalyId   = '<%= classId %>';
-     var tantargy    = '<%= subject %>';
-     
-     var vannakDiakok = !(<%- JSON.stringify(diakok) %>.length == 0);
+
 
      //HA NINCS MÉG CSATLAKOZOTT DIÁK SZÖVEG
      if(!vannakDiakok){
@@ -260,6 +264,7 @@
             var hiba = false;
             
             if(mennyiChecked==0){
+                loaderStop();
                 hiba = true;
                 Swal.fire({
                     type: 'error',
@@ -268,6 +273,7 @@
                 })
             }
             if(pont=='' && (pont==0 && feladatNev == '')){
+                loaderStop();
                 hiba = true;
                 Swal.fire({
                     type: 'error',
@@ -337,6 +343,85 @@
             }
         });
         
+    //FELADAT SZERKESZTÉSE
+    $(".feladatSzerkesztesButton").on("click",function(){
+        let nevId = $(this).parent().parent().parent().attr("name");
+        let userId = $(this).parent().parent().parent().attr("id");
+        let feladatNev = $(this).parent().parent().find("#feladatNevTd").text();
+        let feladatPont = Number($(this).parent().parent().find("#feladatPontTd").text());
+        let feladatId = $(this).attr("id");
+        if(feladatId){
+            Swal.fire({
+                title:"Feladat szerkesztés",
+                showCancelButton: true,
+                confirmButtonColor: '#FFC107',
+                cancelButtonColor: '#3085d6',
+                cancelButtonText: 'Mégse',
+                confirmButtonText: 'Szerkeszt!',
+                html:
+                    'Feladat neve: <input type="text" id="feladatSzerkInput" class="swal2-input alignCenter marginTop0" value="' + feladatNev + '" >' +
+                    'Pont:         <input type="text" id="pontSzerkInput" class="swal2-input alignCenter marginTop0" value="' + feladatPont + '" >',
+                preConfirm: () => {
+                    return [$("#feladatSzerkInput").val(), $("#pontSzerkInput").val()]
+                }
+            }).then((data)=>{
+                feladatNev = data.value[0]
+                feladatPont = data.value[1]
+                console.log(data)
+                $.ajax({
+                    type:'POST',
+                    url:'/changeTask',
+                    dataType:'json',
+                    data:{
+                        osztalyId:osztalyId,
+                        tantargy:tantargy,
+                        nevId:nevId,
+                        userId:userId,
+                        feladatId:feladatId,
+                        feladatNev:feladatNev,
+                        feladatPont:feladatPont
+                    },
+                    success:function(back){
+                        if(back.success){
+                            loaderStop();
+                            Swal.fire({
+                                type: 'success',
+                                title: 'Elmentve!',
+                                text: '',
+                                showConfirmButton: false,
+                                timer: 1000
+                            }).then(()=>{
+                                location.reload();
+                            });
+                        } else {
+                            loaderStop();
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: 'Valami hiba történt, próbáld meg később!'
+                            });
+                        }
+                    },
+                    error:function(){
+                        loaderStop();
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            text: 'Valami hiba történt, próbáld meg később!'
+                        })
+                    }
+                });
+            });
+        } else {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Valami hiba történt, próbáld meg később!'
+            })
+        }
+        
+    });
+
     //KIJELÖLT EMBEREK NULLÁZÁSA = (annyi pontot add hozzá, hogy nulla legyen és ezt nullazas feladat néven menti el)
         $(".tobbProfilNullazasaButton").on("click",function(){
             loaderShow();

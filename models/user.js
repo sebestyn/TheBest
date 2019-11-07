@@ -9,6 +9,7 @@ var UserSchema = new mongoose.Schema({
     nev:String,
     osztalyok:Array, //ID
     kapott:[{
+        feladat_id:String,
         nev:String,
         tantargy:String,
         pont:Number,
