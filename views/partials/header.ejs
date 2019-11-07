@@ -41,7 +41,7 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a class="nav-link" href="#">Útmutató</a>
+                <a class="nav-link" href="#" id="utmutatoLink">Útmutató</a>
               </li>
              </ul>
              
@@ -61,6 +61,14 @@
 		loaderStop()
 	});	
 	
+
+  $("#utmutatoLink").on("click",function(){
+    Swal.fire({
+      title:"Fejlesztés alatt.",
+      type:"error"
+    })
+  });
+
 </script>
     
   
