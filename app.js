@@ -110,29 +110,22 @@ var upload = multer({ storage: storage })
     //DIÁK
         //DIÁK USER ADATAI OLDAL
             app.get('/userInfoSt',isLoggedIn,function(req, res) {
-                        SuliDB.findOne({'_id':req.user.suli},function(err, suli) {
-                            if(err){
-                                console.log('SULI FIND ERROR');
-                                console.log(err);
-                            } else {
-                                var osztalyok = [];
-                                SuliDB.findOne({'_id':req.user.suli},function(err, suli) {
-                                    if(err){
-                                        console.log('SULI FIND ERROR 4');
-                                        console.log(err);
-                                    } else {
-                                        req.user.osztalyok.forEach(function(osztalyId){
-                                            suli.osztalyok.forEach(function(osztalyDB){
-                                                if(String(osztalyId) == String(osztalyDB._id)){
-                                                    osztalyok.push(osztalyDB.nev)
-                                                }
-                                            })
-                                        })
-                                        res.render('userInfo.ejs',{nev:req.user.nev,suli:suli.nev,osztalyok:osztalyok})
-                                    }
-                                });
-                            }
-                        });
+                var osztalyok = [];
+                SuliDB.findOne({'_id':req.user.suli},function(err, suli) {
+                    if(err){
+                        console.log('SULI FIND ERROR 4');
+                        console.log(err);
+                    } else {
+                        req.user.osztalyok.forEach(function(osztalyId){
+                            suli.osztalyok.forEach(function(osztalyDB){
+                                if(String(osztalyId) == String(osztalyDB._id)){
+                                    osztalyok.push(osztalyDB.nev)
+                                }
+                            })
+                        })
+                        res.render('userInfo.ejs',{nev:req.user.nev,suli:suli.nev,osztalyok:osztalyok});
+                    }
+                });
             });
         
         //DIÁK ÚJ OSZTÁLYHOZ CSATLAKOZÁS OLDAL
