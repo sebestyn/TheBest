@@ -1,0 +1,63 @@
+<% if(!user){ %>
+    <% include partials/header %>
+<% }else if(!teacher){ %>
+    <% include partials/headerStudent %>
+<% }else{ %>
+    <% include partials/headerTeacher %>
+<% } %>
+
+<div class='container mainContainer'> 
+
+    <!--DIÁKOKNAK-->
+        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Diákoknak</h1>
+        
+    <!--LEÍRÁS-->
+        <div class='container width70pcmobile98pc'>
+            <p class='white alignJustify '>
+                Ez a weboldal általános és középiskolásoknak készült abból a célból, 
+                hogy a tanárok a diák pontjait az interneten rögzíthessék amit később 
+                a diákok akár otthon is meg tudnak nézni mire mennyi pontot kaptak és 
+                még mennyi kell a következő "ötösig".
+                Tanárok a regisztráció után új osztályokat és benne új tantárgy szerinti csoportokat hozhatnak létre. 
+                A diákok ezekhez egy kóddal csatlakozhatnak amit a tanár határoz meg.
+                Ha pontosabb leírást akarsz nézd meg az "Útmutató" menüpontot.
+                Ha bármilyen kérdésed ezen az email címen keresztül megkérdezheted: sebestyen.info@gmail.com 
+            </p>
+        </div>
+    
+    <!--TANÁROKNAK-->
+    <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Tanároknak</h1>
+        
+    <!--LEÍRÁS-->
+        <div class='container width70pcmobile98pc'>
+            <p class='white alignJustify '>
+                Ez a weboldal általános és középiskolásoknak készült abból a célból, 
+                hogy a tanárok a diák pontjait az interneten rögzíthessék amit később 
+                a diákok akár otthon is meg tudnak nézni mire mennyi pontot kaptak és 
+                még mennyi kell a következő "ötösig".
+                Tanárok a regisztráció után új osztályokat és benne új tantárgy szerinti csoportokat hozhatnak létre. 
+                A diákok ezekhez egy kóddal csatlakozhatnak amit a tanár határoz meg.
+                Ha pontosabb leírást akarsz nézd meg az "Útmutató" menüpontot.
+                Ha bármilyen kérdésed ezen az email címen keresztül megkérdezheted: sebestyen.info@gmail.com 
+            </p>
+        </div>
+
+</div>  
+
+    
+<script>
+    
+    
+
+</script>
+
+
+
+
+
+
+
+
+
+
+<% include partials/footer %>

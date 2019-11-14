@@ -9,14 +9,14 @@
 <div class="container-fluid">
 
 <!--CÍM-->
-    <h1 class='alignCenter white marginTop1 fontFamilyCourier fontSize4remMobile9vw '><%= tantargy %></h1>   
-    <h1 class='alignCenter white  fontFamilyCourier fontSize2remMobile6vw '><%= osztaly %><span class='fontSize1p2'> (kód:<%= kod %>)</span></h1>  
+    <h1 class='alignCenter white marginTop1 fontFamilyCourier fontSize4remMobile9vw '><%= osztaly %></h1>   
+    <h1 class='alignCenter white  fontFamilyCourier fontSize2remMobile6vw '><%= tantargy %><span class='fontSize1p2'> (kód:<%= kod %>)</span></h1>  
     
     <p class="alignCenter"><img class="margrin1 width15pcmobile50pc hide nincsSzoveg" src="/nothing_found.png"></p>
     <h1 class='alignCenter white margin2 fontFamilyCourier fontSize2remMobile6vw hide nincsSzoveg'>Még senki se csatlakozott!</h1>
     
     <div class="marginAuto block alignCenter keresesNevAlapjanDiv">
-        <p class="white" >Keresés név alapján: <input class="maxWidth90pIfNotMobile" id="keresesInput" type="text" > </p>
+        <p class="white" >Keresés: <input class="maxWidth90pIfNotMobile" id="keresesInput" type="text" > </p>
     </div>
 
     <div class="table-responsive-lg width85pcmobile99pc marginAuto emberekDiv">
@@ -185,16 +185,18 @@
     //EGY EMBER ÚJ FELADAT/PONT
         $('.mentesButton').on('click',function(){
             loaderShow();
-            var feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
-            var pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
-            var nevId       = $(this).attr("name");
-            var userId      = $(this).attr('id');
-            var osztalyId   = '<%= classId %>';
-            var tantargy    = '<%= subject %>'
-            var thisHtml = $(this);
+            let feladatNev  = $(this).parent().parent().find('.feladatInputTd').find('.feladatInput').val();
+            let pont        = Number($(this).parent().parent().find('.pontInputTd').find('.pontInput').val());
+            let nevId       = $(this).attr("name");
+            let userId      = $(this).attr('id');
+            let osztalyId   = '<%= classId %>';
+            let tantargy    = '<%= subject %>'
+            let thisHtml    = $(this);
+            let feladatId   = idGenerator(8);
 
             let emberek = [{
                 feladatNev:feladatNev,
+                feladatId:feladatId,
                 pont:pont,
                 nevId:nevId,
                 userId:userId
@@ -223,7 +225,17 @@
                             loaderStop();
                             var jelenlegiPont = Number(thisHtml.parent().parent().find('.diakPontTd').text());
                             thisHtml.parent().parent().find('.diakPontTd').text(jelenlegiPont+pont);
-                            thisHtml.parent().parent().parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
+                            thisHtml.parent().parent().parent().next('.feladatokTbody').children('tr:first').after('\
+                                <tr class="table-light ">\
+                                    <td colspan="2" class="alignCenter black">'+date+'</td>\
+                                    <td colspan="1" class="alignCenter black" id="feladatNevTd"  > '+feladatNev+'</td>\
+                                    <td colspan="1" class="alignCenter black" id="feladatPontTd" > '+pont+'</td>\
+                                    <td colspan="3" class="alignCenter black">\
+                                        <button class="feladatSzerkesztesButton btn btn-warning white width100pc" id="' + feladatId + '">Szerkeszt</button>\
+                                    </td>\
+                                </tr>'
+                            );
+                           
                             Swal.fire({
                                 type: 'success',
                                 title: 'Elmentve!',
@@ -256,8 +268,8 @@
     //KIJELÖLT EMBEREK ÚJ FELADAT/PONT
         $('.kijeloltEmberekButton').on('click',function(){
             loaderShow();
-            var trDarab = $('.nevekTable tr').length-1;
-		    var mennyiChecked = Number($('.diakCheckbox:checked').length);
+            let trDarab = $('.nevekTable tr').length-1;
+		    let mennyiChecked = Number($('.diakCheckbox:checked').length);
 		    
             let emberek = [];
 
@@ -291,16 +303,27 @@
                         var pont = Number($('.nevekTable tr').eq(i+2).find(".pontInputTd").find(".pontInput").val()) ;
     		            var nevId = $('.nevekTable tr').eq(i+2).attr('name');
                         var userId = $('.nevekTable tr').eq(i+2).attr('id');
+                        var feladatId = idGenerator(8);
                         
     		            emberek.push({
                             feladatNev:feladatNev,
+                            feladatId:feladatId,
                             pont:pont,
                             nevId:nevId,
                             userId:userId
                         });
                         var jelenlegiPont = Number($('.nevekTable tr').eq(i+2).find('.diakPontTd').text());
                 		$('.nevekTable tr').eq(i+2).find('.diakPontTd').text(jelenlegiPont+pont);
-                		$('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
+                        $('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('\
+                            <tr class="table-light ">\
+                                    <td colspan="2" class="alignCenter black">'+date+'</td>\
+                                    <td colspan="1" class="alignCenter black" id="feladatNevTd"  > '+feladatNev+'</td>\
+                                    <td colspan="1" class="alignCenter black" id="feladatPontTd" > '+pont+'</td>\
+                                    <td colspan="3" class="alignCenter black">\
+                                        <button class="feladatSzerkesztesButton btn btn-warning white width100pc" id="' + feladatId + '">Szerkeszt</button>\
+                                    </td>\
+                            </tr>'
+                        );
     		        }
     		    }
     		    $.ajax({
@@ -343,8 +366,8 @@
             }
         });
         
-    //FELADAT SZERKESZTÉSE
-    $(".feladatSzerkesztesButton").on("click",function(){
+    //FELADAT SZERKESZTÉSE GOMG LISTENER
+    $(document).on("click",".feladatSzerkesztesButton",function(){
         let nevId = $(this).parent().parent().parent().attr("name");
         let userId = $(this).parent().parent().parent().attr("id");
         let feladatNev = $(this).parent().parent().find("#feladatNevTd").text();
@@ -354,20 +377,71 @@
             Swal.fire({
                 title:"Feladat szerkesztés",
                 showCancelButton: true,
-                confirmButtonColor: '#FFC107',
+                confirmButtonColor: '#ce1414',
                 cancelButtonColor: '#3085d6',
                 cancelButtonText: 'Mégse',
-                confirmButtonText: 'Szerkeszt!',
+                confirmButtonText: 'Törlés!',
                 html:
                     'Feladat neve: <input type="text" id="feladatSzerkInput" class="swal2-input alignCenter marginTop0" value="' + feladatNev + '" >' +
-                    'Pont:         <input type="text" id="pontSzerkInput" class="swal2-input alignCenter marginTop0" value="' + feladatPont + '" >',
+                    'Pont:         <input type="text" id="pontSzerkInput" class="swal2-input alignCenter marginTop0" value="' + feladatPont + '" >' + 
+                    '<button class="btn btn-warning btn-lg white szerkesztButton">Szerkeszt!</button>', 
                 preConfirm: () => {
                     return [$("#feladatSzerkInput").val(), $("#pontSzerkInput").val()]
                 }
             }).then((data)=>{
-                feladatNev = data.value[0]
-                feladatPont = data.value[1]
-                console.log(data)
+                //FELADAT TÖRLÉSE
+                if(data.dismiss != "overlay" && data.dismiss != "cancel"){
+                    feladatNev = data.value[0]
+                    feladatPont = data.value[1]
+                    $.ajax({
+                        type:'POST',
+                        url:'/deleteTask',
+                        dataType:'json',
+                        data:{
+                            osztalyId:osztalyId,
+                            tantargy:tantargy,
+                            nevId:nevId,
+                            userId:userId,
+                            feladatId:feladatId,
+                            feladatNev:feladatNev,
+                            feladatPont:feladatPont
+                        },
+                        success:function(back){
+                            if(back.success){
+                                loaderStop();
+                                Swal.fire({
+                                    type: 'success',
+                                    title: 'Törölve!',
+                                    text: '',
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                }).then(()=>{
+                                    location.reload();
+                                });
+                            } else {
+                                loaderStop();
+                                Swal.fire({
+                                    type: 'error',
+                                    title: 'Oops...',
+                                    text: 'Valami hiba történt, próbáld meg később!'
+                                });
+                            }
+                        },
+                        error:function(){
+                            loaderStop();
+                            Swal.fire({
+                                type: 'error',
+                                title: 'Oops...',
+                                text: 'Valami hiba történt, próbáld meg később!'
+                            })
+                        }
+                    });
+                }
+            });
+            //FELADAT SZERKESZTÉS
+            $(".szerkesztButton").on("click",function(){
+                feladatNev = $("#feladatSzerkInput").val();
+                feladatPont = $("#pontSzerkInput").val();
                 $.ajax({
                     type:'POST',
                     url:'/changeTask',
@@ -741,7 +815,18 @@
     			if ($('.checkbox:checked').length == $('.checkbox').length ){
     				$("#select_all").prop('checked', true);
     			}
-		}
+        }
+
+    //ID GENERATOR
+        function idGenerator(id_length=8){
+            let ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
+            var d = new Date();
+            var id = d.getTime()
+            for (var i = 0; i < id_length; i++) {
+                id += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+            }
+            return id;
+        }
 
 </script>
 

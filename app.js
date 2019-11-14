@@ -72,6 +72,10 @@ var upload = multer({ storage: storage })
                 res.render("home.ejs");
             });
             
+        //ÚTMUTATÓ OLDAL
+            app.get("/utmutato",function(req,res){
+                res.render("utmutato.ejs");
+            });
         //LOGIN OLDAL
             app.get('/login',function(req, res) {
                res.render('login.ejs') 
@@ -522,7 +526,7 @@ var upload = multer({ storage: storage })
                                     suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].pont += Number(diak.pont);
                                 //FELADAT OBJECT
                                     var feladatObj = {
-                                        feladat_id: idGenerator(8),
+                                        feladat_id: diak.feladatId,
                                         tantargy:tantargy,
                                         nev:diak.feladatNev,
                                         pont:diak.pont,
@@ -562,6 +566,64 @@ var upload = multer({ storage: storage })
                     }
                 })
                 res.status(200).send({success: sikerult})
+            });
+        //EGY FELADAT TÖRLÉSE
+            app.post('/deleteTask',function(req,res){
+                 let osztalyId = req.body.osztalyId;
+                 let tantargy = req.body.tantargy;
+                 let nevId = req.body.nevId;
+                 let userId = req.body.userId;
+                 let feladatId = req.body.feladatId;
+                 let sikerult = true;
+ 
+                 SuliDB.findOne({'_id':req.user.suli},function(err, suli){
+                     if(err){
+                         sikerult = false;
+                         console.log("SULI ERROR 16");
+                         console.log(err);
+                     } else {
+                         var osztalyIndex = suli.osztalyok.findIndex(x => String(x._id) == String(osztalyId));
+                         var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => String(x.nev) == String(tantargy));
+                         var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
+                         var feladatIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott.findIndex(x =>String(x.feladat_id) == String(feladatId))
+ 
+                         //SULI DB
+                             //PONT VALTOZTATÁS
+                             suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].pont -= suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott[feladatIndex].pont;
+                             //FELADAT TÖRLÉS
+                             suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott.splice(feladatIndex, 1);
+
+                         suli.save(function(err){
+                             if(err){
+                                 sikerult = false;
+                                 console.log("SULI ERROR 18");
+                                 console.log(err);
+                             } else {
+                                 //USER DB
+                                 User.findOne({'_id':userId},function(err, diakDBbol) {
+                                     if(err){
+                                         sikerult = false;
+                                         console.log('SULI  ERROR 16');
+                                         console.log(err);
+                                     } else {
+                                         let kapottIndex = diakDBbol.kapott.findIndex(x =>String(x.feladat_id) == String(feladatId));
+                                         diakDBbol.kapott.splice(kapottIndex, 1);
+                                         diakDBbol.save(function(err){
+                                             if(err){
+                                                 sikerult = false;
+                                                 console.log('SULI  ERROR 17');
+                                                 console.log(err);
+                                             } else {
+                                                 console.log('Feladat törölve!');
+                                             }
+                                         });
+                                     }
+                                 });
+                             }
+                         });
+                     }
+                 });
+                 res.status(200).send({success: sikerult});
             });
         //FELADAT VÁLTOZTATÁSA POST
             app.post('/changeTask',function(req,res){
@@ -642,13 +704,12 @@ var upload = multer({ storage: storage })
                         var tantargyIndex = suli.osztalyok[osztalyIndex].tantargyak.findIndex(x => String(x.nev) == String(tantargy));
                         
                         nevekId.forEach(function(nevId){
-                            var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
-                            
                             //SULIDB-ből TÖRLÉS
-                                suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].pont = 0;
-                                suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott = [];
+                            var userIndex = suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok.findIndex(x => String(x._id) == String(nevId))
+                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].pont = 0;
+                            suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[userIndex].kapott = [];
                         });
-                        suli.save(function(err, data){
+                        suli.save(function(err){
                             if(err){
                                 sikerult = false;
                                 console.log('SULI SUJECT MENTÉS ERROR 6');
