@@ -532,7 +532,6 @@ var upload = multer({ storage: storage })
                                         pont:diak.pont,
                                         mikor:date
                                     }
-                                    console.log(feladatObj);
                                 //FELADAT OBJECT SULI DB-be
                                     suli.osztalyok[osztalyIndex].tantargyak[tantargyIndex].diakok[diakIndex].kapott.push(feladatObj);
                                 //FELADAT OBJECT USER DB-be
