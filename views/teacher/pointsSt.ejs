@@ -182,6 +182,14 @@
             },1) 
         });
 
+    //FELADAT / PONT INPUT ENTER
+    $(".feladatInput").enterPress(function(){
+        $(this).parent().next(".pontInputTd").find(".pontInput").focus();
+    });
+    $(".pontInput").enterPress(function(){
+        $(this).parent().next("td").find(".mentesButton").click();
+    });
+    
     //EGY EMBER ÚJ FELADAT/PONT
         $('.mentesButton').on('click',function(){
             loaderShow();
@@ -192,7 +200,7 @@
             let osztalyId   = '<%= classId %>';
             let tantargy    = '<%= subject %>'
             let thisHtml    = $(this);
-            let feladatId   = idGenerator(8);
+            let feladatId   = idDateGenerator(8);
 
             let emberek = [{
                 feladatNev:feladatNev,
@@ -303,7 +311,7 @@
                         var pont = Number($('.nevekTable tr').eq(i+2).find(".pontInputTd").find(".pontInput").val()) ;
     		            var nevId = $('.nevekTable tr').eq(i+2).attr('name');
                         var userId = $('.nevekTable tr').eq(i+2).attr('id');
-                        var feladatId = idGenerator(8);
+                        var feladatId = idDateGenerator(8);
                         
     		            emberek.push({
                             feladatNev:feladatNev,
@@ -540,12 +548,14 @@
                             
                             if(selectedRow){
                                 var feladatNev = "NULLÁZÁS";
+                                var feladatId = idDateGenerator(8);
                                 var pont = 0 - Number($('.nevekTable tr').eq(i+2).find(".diakPontTd").text()) ;
                                 var nevId = $('.nevekTable tr').eq(i+2).attr('name');
                                 var userId = $('.nevekTable tr').eq(i+2).attr('id');
                                 
                                 emberek.push({
                                     feladatNev:feladatNev,
+                                    feladatId:feladatId,
                                     pont:pont,
                                     nevId:nevId,
                                     userId:userId
@@ -553,7 +563,16 @@
                             }
                             var jelenlegiPont = Number($('.nevekTable tr').eq(i+2).find('.diakPontTd').text());
                             $('.nevekTable tr').eq(i+2).find('.diakPontTd').text(jelenlegiPont+pont);
-                            $('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('<tr class="table-light "><td colspan="2" class="alignCenter black">'+date+'</td><td colspan="2" class="alignCenter black">'+feladatNev+'</td><td colspan="3" class="alignCenter black">'+pont+'</td></tr>');
+                            $('.nevekTable tr').eq(i+2).parent().next('.feladatokTbody').children('tr:first').after('\
+                                <tr class="table-light ">\
+                                        <td colspan="2" class="alignCenter black">'+date+'</td>\
+                                        <td colspan="1" class="alignCenter black" id="feladatNevTd"  > '+feladatNev+'</td>\
+                                        <td colspan="1" class="alignCenter black" id="feladatPontTd" > '+pont+'</td>\
+                                        <td colspan="3" class="alignCenter black">\
+                                            <button class="feladatSzerkesztesButton btn btn-warning white width100pc" id="' + feladatId + '">Szerkeszt</button>\
+                                        </td>\
+                                </tr>'
+                            );
                                         
                         }
                         $.ajax({
@@ -817,16 +836,6 @@
     			}
         }
 
-    //ID GENERATOR
-        function idGenerator(id_length=8){
-            let ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
-            var d = new Date();
-            var id = d.getTime()
-            for (var i = 0; i < id_length; i++) {
-                id += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
-            }
-            return id;
-        }
 
 </script>
 

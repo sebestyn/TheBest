@@ -7,38 +7,58 @@
 <% } %>
 
 <div class='container mainContainer'> 
+    <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Útmutató</h1>
+    <!--GOMBOK-->
+    <div class="container width50pcIfNotM marginTop3 gombok">
+      <div class="row">
+        <div class="col-sm alignCenter margin1">
+          <button class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover fontSize1p5" id='tanarButton'>Tanár vagyok</button>
+        </div>
+        <div class="col-sm alignCenter margin1 marginBottom5">
+          <button class="btn white bgColorBlack borderA bgColorWhiteHover colorBlackHover fontSize1p5" id='diakButton'>Diák vagyok</button>
+        </div>
+      </div>
+    </div>
 
-    <!--DIÁKOKNAK-->
-        <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Diákoknak</h1>
-        
-    <!--LEÍRÁS-->
-        <div class='container width70pcmobile98pc'>
+
+    <!--TANÁR-->
+        <div class='tanarSpan container width70pcmobile98pc hide marginBottom2'>
             <p class='white alignJustify '>
-                Ez a weboldal általános és középiskolásoknak készült abból a célból, 
-                hogy a tanárok a diák pontjait az interneten rögzíthessék amit később 
-                a diákok akár otthon is meg tudnak nézni mire mennyi pontot kaptak és 
-                még mennyi kell a következő "ötösig".
-                Tanárok a regisztráció után új osztályokat és benne új tantárgy szerinti csoportokat hozhatnak létre. 
-                A diákok ezekhez egy kóddal csatlakozhatnak amit a tanár határoz meg.
-                Ha pontosabb leírást akarsz nézd meg az "Útmutató" menüpontot.
-                Ha bármilyen kérdésed ezen az email címen keresztül megkérdezheted: sebestyen.info@gmail.com 
+                1) Ha még nem regisztrált menjen a "Regisztrálok" gombra!
+                <img src="/utmutato/registeralok.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                2) Töltse ki a mezőket! A tanári kódhoz kérjen segítséget ezen az email-címen keresztül: "sebestyen.info@gmail.com"!
+                <img src="/utmutato/tanarikod.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                3) Miután bejelentkezett ez az oldal fogadja:
+                <img src="/utmutato/osztalyaim.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                4) Hozzon létre új osztályt VAGY ha már létezik adja hozzá saját tantárgyát(5)!</br>
+                A kód megadásával tudnak majd a diákok csatlakozni. </br>
+                Az osztály nevében a szám évvégén mindig eggyel növekszik!
+                <img src="/utmutato/ujosztaly.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                5) Tantárgy hozzáadása meglévő osztályhoz:
+                <img src="/utmutato/ujtantargy.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                6) "Osztályaim" menüpont alatt osztályok listáját találhatja. Egy osztály rákattintásával megjelennek a tantárgyai. Valassza ki amelyiket használni/szerkeszteni szeretné!
+                <img src="/utmutato/osztalyaim_menu.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                7) Osztály pontjai felület:
+                <img src="/utmutato/pontok.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                8) NULLÁZÁS: Kijelölt emberek pontjait 0-ra állítja de az elmentett feladatok nem törli.
+                <img src="/utmutato/nullazas.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                9) Ha rákattint egy diák nevére megjelennek a kapott pontjai.
+                <img src="/utmutato/pontjai.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                10) Szerkesztheti vagy törölheti is a pontokat.
+                <img src="/utmutato/szerkeszt.png" class="width85pcmobile99pc block marginLeftRightAuto marginTop1 marginBottom1">
+                <center class="white">
+                    Köszönjük, hogy a mi felületünket használja! 
+                    <br>
+                    Bármilyen kérdésa van, nyugatton írjon erre az email-címre: "sebestyen.info@gmail.com".
+                </center>
+                
             </p>
         </div>
     
-    <!--TANÁROKNAK-->
-    <h1 class='alignCenter white margin2 fontFamilyCourier fontSize4remMobile9vw'>Tanároknak</h1>
-        
-    <!--LEÍRÁS-->
-        <div class='container width70pcmobile98pc'>
+    <!--DIÁK-->
+        <div class='diakSpan container width70pcmobile98pc hide marginBottom2'>
             <p class='white alignJustify '>
-                Ez a weboldal általános és középiskolásoknak készült abból a célból, 
-                hogy a tanárok a diák pontjait az interneten rögzíthessék amit később 
-                a diákok akár otthon is meg tudnak nézni mire mennyi pontot kaptak és 
-                még mennyi kell a következő "ötösig".
-                Tanárok a regisztráció után új osztályokat és benne új tantárgy szerinti csoportokat hozhatnak létre. 
-                A diákok ezekhez egy kóddal csatlakozhatnak amit a tanár határoz meg.
-                Ha pontosabb leírást akarsz nézd meg az "Útmutató" menüpontot.
-                Ha bármilyen kérdésed ezen az email címen keresztül megkérdezheted: sebestyen.info@gmail.com 
+                1) Szerintem átlátható felület. Biztos rájössz, hogy működik.
             </p>
         </div>
 
@@ -47,7 +67,17 @@
     
 <script>
     
+    $("#diakButton").on("click",function(){
+        $(".gombok").hide();
+        $(".tanarSpan").hide();
+        $(".diakSpan").show();
+    });
     
+    $("#tanarButton").on("click",function(){
+        $(".gombok").hide();
+        $(".diakSpan").hide();
+        $(".tanarSpan").show();
+    });
 
 </script>
 

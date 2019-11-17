@@ -38,11 +38,20 @@
         var randomId = idGenerator(10);
 	*/
 
-
-
-
-
-
+//ID GENERATOR WITH DATE
+    function idDateGenerator(id_length=8){
+        let ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz';
+        var d = new Date();
+        var id = d.getTime()
+        for (var i = 0; i < id_length; i++) {
+            id += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+        }
+        return id;
+    }
+    //PL
+    /*
+        var randomId = idDateGenerator(10);
+	*/
 
 
 
