@@ -225,6 +225,9 @@ var upload = multer({ storage: storage })
             
         // DIÁK PONTJAI
             app.get('/mypointsSt',isLoggedIn,function(req, res) {
+                if(req.user.teacher){
+                    res.redirect('/classesTe')
+                }
                 var pontjaim = [];
                 SuliDB.findOne({'_id':req.user.suli},function(err, suli) {
                     if(err){
