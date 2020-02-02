@@ -860,7 +860,7 @@ var upload = multer({ storage: storage })
         app.post("/login", passport.authenticate("local", {
             failureRedirect: "/rosszJelszo"
         }) ,function(req, res){
-            res.redirect('/student')
+            res.redirect('/mypointsSt')
         });
 
     //ROSSZ JELSZÓ
